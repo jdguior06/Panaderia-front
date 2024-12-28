@@ -5,6 +5,7 @@ import {
   addSucursalApi,
   updateSucursalApi,
   deleteSucursalApi,
+  activarSucursalApi,
 } from '../services/sucursalService';
 
 export const fetchSucursales = createAsyncThunk('sucursales/fetchSucursales', async (_, { rejectWithValue }) => {
@@ -46,6 +47,15 @@ export const updateSucursal = createAsyncThunk('sucursales/updateSucursal', asyn
 export const deleteSucursal = createAsyncThunk('sucursales/deleteSucursal', async (id, { rejectWithValue }) => {
   try {
     await deleteSucursalApi(id);
+    return { id };
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const activarSucursal = createAsyncThunk('sucursales/activarSucursal', async (id, { rejectWithValue }) => {
+  try {
+    await activarSucursalApi(id);
     return { id };
   } catch (error) {
     return rejectWithValue(error.message);
@@ -101,6 +111,14 @@ const sucursalSlice = createSlice({
       })
 
       .addCase(deleteSucursal.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      .addCase(activarSucursal.fulfilled, (state, action) => {
+        state.sucursales = state.sucursales.filter(sucursal => sucursal.id !== action.payload.id);
+      })
+
+      .addCase(activarSucursal.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

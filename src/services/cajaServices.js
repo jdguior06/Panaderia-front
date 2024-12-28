@@ -40,10 +40,18 @@ export const updateCajaApi = async (idSucursal, idCaja, caja) => {
   }
 };
 
-// Desactivar una caja de una sucursal
 export const deleteCajaApi = async (idSucursal, idCaja) => {
   try {
     await api.patch(`/sucursales/${idSucursal}/caja/${idCaja}/desactivar`);
+    return idCaja;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al desactivar la caja');
+  }
+};
+
+export const activarCajaApi = async (idSucursal, idCaja) => {
+  try {
+    await api.patch(`/sucursales/${idSucursal}/caja/${idCaja}/activar`);
     return idCaja;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al desactivar la caja');

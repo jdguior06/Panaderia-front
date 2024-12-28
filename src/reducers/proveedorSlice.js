@@ -5,12 +5,23 @@ import {
   addProveedorApi,
   updateProveedorApi,
   deleteProveedorApi,
-} from '../services/proveedorService';  // Importamos los servicios API
+  fetchProveedoresActivosApi,
+  activarProveedorApi,
+} from '../services/proveedorService';  
 
 // Thunks para las acciones asíncronas
 export const fetchProveedores = createAsyncThunk('proveedores/fetchProveedores', async (_, { rejectWithValue }) => {
   try {
     const data = await fetchProveedoresApi();
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const fetchProveedoresActivos = createAsyncThunk('proveedores/fetchProveedoresActivos', async (_, { rejectWithValue }) => {
+  try {
+    const data = await fetchProveedoresActivosApi();
     return data;
   } catch (error) {
     return rejectWithValue(error.message);
@@ -46,14 +57,22 @@ export const updateProveedor = createAsyncThunk('proveedores/updateProveedor', a
 
 export const deleteProveedor = createAsyncThunk('proveedores/deleteProveedor', async (id, { rejectWithValue }) => {
   try {
-    const data = await deleteProveedorApi(id);
+    await deleteProveedorApi(id);
     return { id };
   } catch (error) {
     return rejectWithValue(error.message);
   }
 });
 
-// Slice de proveedores
+export const activarProveedor = createAsyncThunk('proveedores/activarProveedor', async (id, { rejectWithValue }) => {
+  try {
+    await activarProveedorApi(id);
+    return { id };
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
 const proveedorSlice = createSlice({
   name: 'proveedores',
   initialState: {
@@ -74,6 +93,18 @@ const proveedorSlice = createSlice({
         state.proveedores = action.payload;
       })
       .addCase(fetchProveedores.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchProveedoresActivos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProveedoresActivos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.proveedores = action.payload;
+      })
+      .addCase(fetchProveedoresActivos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -103,6 +134,14 @@ const proveedorSlice = createSlice({
       })
 
       .addCase(deleteProveedor.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      .addCase(activarProveedor.fulfilled, (state, action) => {
+        state.proveedores = state.proveedores.filter(proveedor => proveedor.id !== action.payload.id);
+      })
+
+      .addCase(activarProveedor.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

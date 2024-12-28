@@ -36,9 +36,18 @@ export const updateProductoApi = async (id, producto) => {
   }
 };
 
-export const deleteProductoApi = async (id) => {
+export const desactivarProductoApi = async (id) => {
   try {
     await api.patch(`/producto/${id}/desactivar`);
+    return id;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al eliminar producto');
+  }
+};
+
+export const activarProductoApi = async (id) => {
+  try {
+    await api.patch(`/producto/${id}/activar`);
     return id;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al eliminar producto');

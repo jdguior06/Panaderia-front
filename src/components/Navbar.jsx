@@ -17,11 +17,10 @@ const Navbar = ({ toggleSidebar }) => {
         <button onClick={toggleSidebar} className="lg:hidden">
           <Menu size={24} className="text-white hover:text-red-300 transition duration-200" />
         </button>
-        <h1 className="text-2xl font-bold tracking-wide">Restaurant POS</h1>
+        <h1 className="text-2xl font-bold tracking-wide">PAYEJALI</h1>
       </div>
 
-      {/* Links de navegación */}
-      <div className="hidden md:flex space-x-6 items-center">
+      {/* <div className="hidden md:flex space-x-6 items-center">
         <Link
           to="/"
           className="hover:bg-opacity-75 p-2 rounded-full transition duration-300 hover:shadow-lg"
@@ -40,15 +39,13 @@ const Navbar = ({ toggleSidebar }) => {
         >
           <ClipboardList size={20} className="m-auto" />
         </Link>
-      </div>
+      </div> */}
 
-      {/* Información del usuario y botón de Nueva Orden */}
-      <div className="flex items-center space-x-4">
-        {/* Muestra el usuario actualmente logueado */}
+      {/* <div className="flex items-center space-x-4">
         <ThemedButton variant="secondary" onClick={() => alert('Botón Secundario')}>
           Nueva Orden
         </ThemedButton>
-      </div>
+      </div> */}
     </nav>
   );
 };

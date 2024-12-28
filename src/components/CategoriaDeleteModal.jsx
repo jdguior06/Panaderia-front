@@ -1,8 +1,10 @@
-import React from "react";
 import PropTypes from "prop-types";
 
 const CategoriaDeleteModal = ({ open, onClose, selectedCategoria, onDelete }) => {
+
   if (!open) return null;
+
+  const isActive = selectedCategoria?.activo;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -12,15 +14,18 @@ const CategoriaDeleteModal = ({ open, onClose, selectedCategoria, onDelete }) =>
         </p>
         <div className="mb-6 text-center">
           <h3 className="text-xl font-semibold text-gray-800">
-            ¿Estás seguro de eliminar la categoría <span className="font-bold">{selectedCategoria?.nombre}</span>?
+            ¿Estás seguro de {isActive ? 'desactivar' : 'activar'} la categoría{" "}
+            <span className="font-bold">{selectedCategoria?.nombre}</span>?
           </h3>
         </div>
         <div className="flex justify-center space-x-4">
           <button
-            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-            onClick={() => onDelete(selectedCategoria.id)}  // Llamamos a onDelete con el ID
+            className={`${
+              isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+            } text-white py-2 px-4 rounded-lg`}
+            onClick={() => onDelete(selectedCategoria.id)}  
           >
-            Eliminar
+            {isActive ? 'Desactivar' : 'Activar'}
           </button>
           <button className="bg-gray-300 hover:bg-gray-400 text-black py-2 px-4 rounded-lg" onClick={onClose}>
             Cancelar

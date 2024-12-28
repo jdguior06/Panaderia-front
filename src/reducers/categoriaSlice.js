@@ -5,12 +5,23 @@ import {
   addCategoriaApi,
   updateCategoriaApi,
   deleteCategoriaApi,
+  activarCategoriaApi,
+  fetchCategoriasActivoApi,
 } from '../services/categoriaServices';
 
 // Thunks para acciones asíncronas
 export const fetchCategorias = createAsyncThunk('categorias/fetchCategorias', async (_, { rejectWithValue }) => {
   try {
     const data = await fetchCategoriasApi();
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const fetchCategoriasActivo = createAsyncThunk('categorias/fetchCategoriasActivo', async (_, { rejectWithValue }) => {
+  try {
+    const data = await fetchCategoriasActivoApi();
     return data;
   } catch (error) {
     return rejectWithValue(error.message);
@@ -46,7 +57,16 @@ export const updateCategoria = createAsyncThunk('categorias/updateCategoria', as
 
 export const deleteCategoria = createAsyncThunk('categorias/deleteCategoria', async (id, { rejectWithValue }) => {
   try {
-    const data = await deleteCategoriaApi(id);
+    await deleteCategoriaApi(id);
+    return { id };
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const activarCategoria = createAsyncThunk('categorias/activarCategoria', async (id, { rejectWithValue }) => {
+  try {
+    await activarCategoriaApi(id);
     return { id };
   } catch (error) {
     return rejectWithValue(error.message);
@@ -78,6 +98,18 @@ const categoriaSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(fetchCategoriasActivo.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCategoriasActivo.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categorias = action.payload;
+      })
+      .addCase(fetchCategoriasActivo.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Fetch Categoria
       .addCase(fetchCategoria.fulfilled, (state, action) => {
         state.categoria = action.payload;
@@ -103,6 +135,15 @@ const categoriaSlice = createSlice({
       })
 
       .addCase(deleteCategoria.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // Activar Categoria
+      .addCase(activarCategoria.fulfilled, (state, action) => {
+        state.categorias = state.categorias.filter(categoria => categoria.id !== action.payload.id);
+      })
+
+      .addCase(activarCategoria.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

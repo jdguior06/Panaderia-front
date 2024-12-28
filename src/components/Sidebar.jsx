@@ -46,21 +46,15 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
       className={`flex flex-col text-white w-64 py-6 px-3 absolute inset-y-0 left-0 transform ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } lg:relative lg:translate-x-0 transition duration-300 ease-in-out shadow-lg border-r border-gray-700`}
-      style={{ backgroundColor: theme.primaryColor }} // Aplicamos el color personalizado
+      style={{ backgroundColor: theme.primaryColor }} 
     >
-       {/* Botón para cerrar el sidebar en pantallas pequeñas */}
       <button
         onClick={toggleSidebar}
         className="absolute top-2 right-2 lg:hidden"
       >
         <XMarkIcon className="w-6 h-6 text-white" />
       </button>
-
-      {/* Información del usuario en la parte superior del Sidebar */}
-
-      {/* Opciones de navegación */}
       <nav className="space-y-1 flex-1">
-        {/* Opciones de Sucursales o vista general */}
         {!selectedSucursal ? (
           <>
             <Link
@@ -72,12 +66,12 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
               <HomeIcon className="w-5 h-5 mr-2" /> Todas las Sucursales
             </Link>
             <Link
-              to="/dashboard"
+              to="/ventas"
               className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                location.pathname === "/dashboard" ? "bg-red-700" : ""
+                location.pathname === "/ventas" ? "bg-red-700" : ""
               }`}
             >
-              <ShoppingCartIcon className="w-5 h-5 mr-2" /> Ventas Globales
+              <ShoppingCartIcon className="w-5 h-5 mr-2" /> Ventas
             </Link>
           </>
         ) : (
@@ -143,14 +137,6 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
               }`}
             >
               <TruckIcon className="w-5 h-5 mr-2" /> Cajas
-            </Link>
-            <Link
-              to={`/sucursales/${selectedSucursal.id}/ventas`}
-              className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                location.pathname.includes("/ventas") ? "bg-red-700" : ""
-              }`}
-            >
-              <ShoppingCartIcon className="w-5 h-5 mr-2" /> Ventas
             </Link>
             <Link
               to={`/reportes`}

@@ -6,12 +6,19 @@ import {
   addCaja,
   updateCaja,
   deleteCaja,
+  activarCaja,
 } from "../reducers/cajaSlice";
 import CajaModal from "../components/CajaModal";
 import AperturaCajaModal from "../components/AperturaCajaModal";
-import { PencilSquareIcon, TrashIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  CurrencyDollarIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 import { useTheme } from "../context/ThemeContext";
 import { verificarSesionAbierta } from "../reducers/cajaSesionSlice";
+import ThemedButton from "../components/ThemedButton";
 
 const CajasPage = () => {
   const dispatch = useDispatch();
@@ -49,28 +56,40 @@ const CajasPage = () => {
   };
 
   const handleDelete = async (idCaja) => {
-    await dispatch(deleteCaja({ idSucursal: id, idCaja }));
+    const caja = cajas.find((c) => c.id === idCaja);
+    if (caja.activo) {
+      await dispatch(deleteCaja({ idSucursal: id, idCaja }));
+    } else {
+      await dispatch(activarCaja({ idSucursal: id, idCaja }));
+    }
     dispatch(fetchCajas(id));
   };
 
   const handleOpenAperturaModal = async (caja) => {
     try {
-      const { mismaSesion, sesion } = await dispatch(verificarSesionAbierta(caja.id)).unwrap();
-  
+      const { mismaSesion, sesion } = await dispatch(
+        verificarSesionAbierta(caja.id)
+      ).unwrap();
+
       if (sesion) {
         if (mismaSesion) {
-          alert('Sesión abierta encontrada. Redirigiendo a la sesión actual...');
-          navigate(`/cajas/${caja.id}/sesion/${sesion.id}`, { state: { idSucursal: id } });
+          alert(
+            "Sesión abierta encontrada. Redirigiendo a la sesión actual..."
+          );
+          navigate(`/cajas/${caja.id}/sesion/${sesion.id}`, {
+            state: { idSucursal: id },
+          });
         } else {
-          alert('La caja tiene una sesión abierta, pero pertenece a otro usuario.');
+          alert(
+            "La caja tiene una sesión abierta, pero pertenece a otro usuario."
+          );
         }
       } else {
-        // No hay sesión abierta, abrir el modal de apertura
         setSelectedCaja(caja);
         setOpenAperturaModal(true);
       }
     } catch (error) {
-      alert(error.message || 'Error al verificar la sesión.');
+      alert(error.message || "Error al verificar la sesión.");
     }
   };
 
@@ -82,7 +101,8 @@ const CajasPage = () => {
   );
 
   if (loading) return <div style={{ color: theme.textColor }}>Cargando...</div>;
-  if (error) return <div style={{ color: theme.textColor }}>Error: {error}</div>;
+  if (error)
+    return <div style={{ color: theme.textColor }}>Error: {error}</div>;
 
   return (
     <>
@@ -102,8 +122,10 @@ const CajasPage = () => {
         idSucursal={id}
       />
 
-      <div className="container mx-auto p-6" style={{ color: theme.textColor, backgroundColor: theme.backgroundColor }}>
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: theme.textColor }}>Gestión de Cajas</h2>
+      <div className="container mx-auto p-6">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Gestión de Cajas
+        </h2>
 
         {/* Barra de búsqueda y opciones de visualización */}
         <div className="flex justify-between items-center mb-6">
@@ -119,25 +141,15 @@ const CajasPage = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button
-            className="py-2 px-6 rounded-lg shadow-sm transition transform hover:scale-105"
-            style={{
-              backgroundColor: theme.primaryColor,
-              color: theme.textColor,
-            }}
-            onClick={() => handleOpenModal()}
-          >
+          <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
             Crear Caja
-          </button>
+          </ThemedButton>
+
           <div className="flex items-center ml-4">
             <input
               type="checkbox"
               id="showInactive"
-              className="mr-2 h-4 w-4 border rounded focus:ring transition"
-              style={{
-                backgroundColor: theme.backgroundColor,
-                borderColor: theme.primaryColor,
-              }}
+              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
               checked={showInactive}
               onChange={() => setShowInactive(!showInactive)}
             />
@@ -150,37 +162,47 @@ const CajasPage = () => {
         {/* Grid de cajas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCajas.map((caja) => (
-            <div key={caja.id} className="border p-4 rounded-lg shadow-lg" style={{ backgroundColor: theme.backgroundColor }}>
-              <h3 className="text-xl font-bold mb-2" style={{ color: theme.primaryColor }}>{caja.nombre}</h3>
-              <p>ID: {caja.id}</p>
-              <p>Sucursal: {caja.sucursal?.nombre || "N/A"}</p>
-              <p>Estado: {caja.activo ? "Activa" : "Inactiva"}</p>
+            <div
+              key={caja.id}
+              className={`p-4 rounded-lg shadow-lg transition ${
+                caja.activo ? "bg-white" : "bg-gray-300"
+              }`}
+            >
+              <h3 className="text-xl font-bold mb-2">Caja {caja.nombre}</h3>
+              <p className="text-sm">
+                <strong> ID: </strong>
+                {caja.id}
+              </p>
+              <p className="text-sm"> <strong>Sucursal: </strong> {caja.sucursal?.nombre || "N/A"}</p>
 
               {/* Acciones */}
               <div className="flex justify-between mt-4">
                 <button
-                  className="flex items-center py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105"
-                  style={{ backgroundColor: theme.primaryColor, color: theme.textColor }}
+                  className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
+                  onClick={() => handleOpenModal(caja)}
+                >
+                  <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
+                </button>
+                <button
+                  className={`${
+                    caja.activo
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-green-500 hover:bg-green-600"
+                  } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                  onClick={() => handleDelete(caja.id)}
+                >
+                  {caja.activo ? (
+                    <TrashIcon className="h-5 w-5 mr-1" />
+                  ) : (
+                    <ArrowPathIcon className="h-5 w-5 mr-1" />
+                  )}
+                </button>
+                <button
+                  className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
                   onClick={() => handleOpenAperturaModal(caja)}
                 >
                   <CurrencyDollarIcon className="h-5 w-5 mr-1 inline" />
                   Aperturar
-                </button>
-                <button
-                  className="flex items-center py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105"
-                  style={{ backgroundColor: theme.primaryColor, color: theme.textColor }}
-                  onClick={() => handleOpenModal(caja)}
-                >
-                  <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
-                  
-                </button>
-                <button
-                  className="flex items-center py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105"
-                  style={{ backgroundColor: "#FF4B4B", color: theme.textColor }}
-                  onClick={() => handleDelete(caja.id)}
-                >
-                  <TrashIcon className="h-5 w-5 mr-1 inline" />
-                  
                 </button>
               </div>
             </div>

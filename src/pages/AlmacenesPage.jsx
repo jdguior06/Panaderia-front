@@ -5,11 +5,13 @@ import {
   addAlmacen,
   updateAlmacen,
   deleteAlmacen,
+  activarAlmacen,
 } from "../reducers/almacenSlice";
 import AlmacenModal from "../components/AlmacenModal";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import PermissionWrapper from "../components/PermissionWrapper";
 import { useParams, useNavigate } from "react-router-dom";
+import ThemedButton from "../components/ThemedButton";
 
 const AlmacenesPage = () => {
   const dispatch = useDispatch();
@@ -51,7 +53,12 @@ const AlmacenesPage = () => {
   };
 
   const handleDelete = async (idAlmacen) => {
-    await dispatch(deleteAlmacen({ idSucursal: id, idAlmacen }));
+    const almacen = almacenes.find((a) => a.id === idAlmacen);
+    if (almacen.activo) {
+      await dispatch(deleteAlmacen({ idSucursal: id, idAlmacen }));
+    } else {
+      await dispatch(activarAlmacen({ idSucursal: id, idAlmacen }));
+    }
     dispatch(fetchAlmacenes(id));
   };
 
@@ -97,12 +104,11 @@ const AlmacenesPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <PermissionWrapper permission="PERMISO_ADMINISTRAR_ALMACENES">
-            <button
-              className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg shadow-sm transition transform hover:scale-105"
+            <ThemedButton variant="primary"
               onClick={() => handleOpenModal()}
             >
               Crear Almacén
-            </button>
+            </ThemedButton>
           </PermissionWrapper>
 
           <div className="flex items-center">
@@ -125,16 +131,16 @@ const AlmacenesPage = () => {
             <div
               key={almacen.id}
               className={`p-4 rounded-lg shadow-lg ${
-                almacen.activo ? "bg-white" : "bg-gray-200"
+                almacen.activo ? "bg-white" : "bg-gray-300"
               }`}
             >
               <h3 className="text-xl font-bold mb-2">
                 Almacén #{almacen.numero}
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm">
                 <strong>Descripción:</strong> {almacen.descripcion}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm">
                 <strong>Sucursal:</strong> {almacen.sucursal.nombre}
               </p>
 
@@ -147,14 +153,22 @@ const AlmacenesPage = () => {
                 </button>
 
                 <button
-                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
+                  className={`${
+                    almacen.activo
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-green-500 hover:bg-green-600"
+                  } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
                   onClick={() => handleDelete(almacen.id)}
                 >
-                  <TrashIcon className="h-5 w-5 mr-1" />
+                  {almacen.activo ? (
+                    <TrashIcon className="h-5 w-5 mr-1" />
+                  ) : (
+                    <ArrowPathIcon className="h-5 w-5 mr-1" />
+                  )}
                 </button>
 
                 <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
                   onClick={() => handleSelectAlmacen(almacen)}
                 >
                   <PencilSquareIcon className="h-5 w-5 mr-1" />

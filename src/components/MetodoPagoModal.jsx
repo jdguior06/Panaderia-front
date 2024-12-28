@@ -1,11 +1,21 @@
 import { useState, useMemo, useEffect } from "react";
 
 const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
-  
-  const [metodosPago, setMetodosPago] = useState([
-    { tipoPago: "EFECTIVO", monto: "", detalles: "" },
-  ]);
+  const initialMetodoPago = [{ tipoPago: "EFECTIVO", monto: "", detalles: "" }];
+
+  const [metodosPago, setMetodosPago] = useState(initialMetodoPago);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      resetState();
+    }
+  }, [open]);
+
+  const resetState = () => {
+    setMetodosPago(initialMetodoPago);
+    setError("");
+  };
 
   const cambio = useMemo(() => {
     const sumaPagos = metodosPago.reduce(
@@ -19,6 +29,7 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
     const updatedMetodosPago = [...metodosPago];
     updatedMetodosPago[index].monto = value;
     setMetodosPago(updatedMetodosPago);
+    console.log("Actualización de montos:", updatedMetodosPago);
   };
 
   const handleMontoBlur = (index) => {
@@ -46,6 +57,22 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
   };
 
   const handleSave = () => {
+    if (metodosPago.length === 0) {
+      setError("Debe agregar al menos un método de pago");
+      return;
+    }
+
+    for (const metodo of metodosPago) {
+      if (
+        !metodo.monto ||
+        isNaN(parseFloat(metodo.monto)) ||
+        parseFloat(metodo.monto) <= 0
+      ) {
+        setError("Todos los montos deben ser números válidos mayores a 0");
+        return;
+      }
+    }
+
     const sumaPagos = metodosPago.reduce(
       (acc, metodo) => acc + parseFloat(metodo.monto || 0),
       0
@@ -53,18 +80,31 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
 
     if (sumaPagos < total) {
       setError(
-        `El total de los métodos de pago (${sumaPagos.toFixed(2)}) no cubre el total de la venta (${total.toFixed(2)}).`
+        `El total de los métodos de pago (${sumaPagos.toFixed(
+          2
+        )}) no cubre el total de la venta (${total.toFixed(2)}).`
       );
       return;
     }
 
+    for (const metodo of metodosPago) {
+      if (metodo.tipoPago !== "EFECTIVO" && !metodo.detalles.trim()) {
+        setError(
+          `Debe proporcionar detalles para el pago con ${metodo.tipoPago}`
+        );
+        return;
+      }
+    }
+
     setError("");
+    console.log("Enviando métodos de pago:", metodosPago);
     onSave(
       metodosPago.map((metodo) => ({
         ...metodo,
         monto: parseFloat(metodo.monto || 0),
       }))
     );
+    resetState();
   };
 
   if (!open) return null;
@@ -124,15 +164,13 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
         </div>
 
         {error && (
-          <p className="text-red-500 mt-4 text-center font-semibold">
-            {error}
-          </p>
+          <p className="text-red-500 mt-4 text-center font-semibold">{error}</p>
         )}
 
         {/* Muestra el cambio calculado */}
         <div className="mt-4 border-t pt-4">
           <p className="text-lg font-semibold">
-            Cambio: <span className="text-green-600">${cambio}</span>
+            Cambio: <span className="text-green-600">Bs. {cambio}</span>
           </p>
         </div>
 

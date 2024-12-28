@@ -44,3 +44,12 @@ export const deleteSucursalApi = async (id) => {
     throw new Error(error.response?.data?.message || 'Error al desactivar la sucursal');
   }
 };
+
+export const activarSucursalApi = async (id) => {
+  try {
+    await api.patch(`/sucursal/${id}/activar`);
+    return id;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al activar la sucursal');
+  }
+};

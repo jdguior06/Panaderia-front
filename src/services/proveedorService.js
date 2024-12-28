@@ -9,6 +9,15 @@ export const fetchProveedoresApi = async () => {
   }
 };
 
+export const fetchProveedoresActivosApi = async () => {
+  try {
+    const response = await api.get('/proveedor/activos');
+    return response.data.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener proveedores');
+  }
+};
+
 export const fetchProveedorApi = async (id) => {
   try {
     const response = await api.get(`/proveedor/${id}`);
@@ -42,5 +51,14 @@ export const deleteProveedorApi = async (id) => {
     return id;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al eliminar proveedor');
+  }
+};
+
+export const activarProveedorApi = async (id) => {
+  try {
+    await api.patch(`/proveedor/${id}/activar`);
+    return id;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al activar proveedor');
   }
 };

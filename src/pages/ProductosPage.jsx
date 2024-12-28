@@ -5,11 +5,16 @@ import {
   addProducto,
   updateProducto,
   deleteProducto,
+  activarProducto,
 } from "../reducers/productoSlice";
-import { fetchCategorias } from "../reducers/categoriaSlice";
+import { fetchCategoriasActivo } from "../reducers/categoriaSlice";
 import ProductoModal from "../components/ProductoModal";
 import ProductoDeleteModal from "../components/ProductoDeleteModal";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import PermissionWrapper from "../components/PermissionWrapper";
 import ThemedButton from "../components/ThemedButton";
 
@@ -22,14 +27,13 @@ const ProductosPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showInactive, setShowInactive] = useState(false); // Estado para checkbox de inactivos
+  const [showInactive, setShowInactive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [productosPerPage] = useState(5); // Productos por página
+  const [productosPerPage] = useState(5);
 
-  // Fetch de productos y categorías
   useEffect(() => {
     dispatch(fetchProductos());
-    dispatch(fetchCategorias());
+    dispatch(fetchCategoriasActivo());
   }, [dispatch]);
 
   const handleOpenModal = (product = null) => {
@@ -54,12 +58,16 @@ const ProductosPage = () => {
   };
 
   const handleDelete = async (id) => {
-    await dispatch(deleteProducto(id));
+    const producto = productos.find((p) => p.id === id);
+    if (producto.activo) {
+      await dispatch(deleteProducto(id));
+    } else {
+      await dispatch(activarProducto(id));
+    }
     setOpenDeleteModal(false);
     dispatch(fetchProductos());
   };
 
-  // Filtrar productos según búsqueda y estado activo/inactivo
   const filteredProductos = productos.filter(
     (producto) =>
       (showInactive || producto.activo) &&
@@ -173,9 +181,7 @@ const ProductosPage = () => {
               {currentProductos.map((producto) => (
                 <tr
                   key={producto.id}
-                  className={`${
-                    producto.activo ? "bg-white" : "bg-gray-200"
-                  } hover:bg-gray-50 transition`}
+                  className={`${producto.activo ? "" : "bg-gray-200"} `}
                 >
                   <td className="border-b border-gray-200 py-1 px-2 text-sm">
                     {producto.codigo}
@@ -210,7 +216,7 @@ const ProductosPage = () => {
                     {producto.categoria?.nombre || "Sin categoría"}
                   </td>
                   <PermissionWrapper permission="PERMISO_ADMINISTRAR_PRODUCTOS">
-                    <td className="border-b border-gray-200 py-1 px-2 flex items-center justify-start space-x-2">
+                    <td className="py-3 px-4 flex space-x-2">
                       <button
                         className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
                         onClick={() => handleOpenModal(producto)}
@@ -218,10 +224,18 @@ const ProductosPage = () => {
                         <PencilSquareIcon className="h-4 w-4" />
                       </button>
                       <button
-                        className="bg-red-500 hover:bg-red-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
+                        className={`${
+                          producto.activo 
+                            ? "bg-red-500 hover:bg-red-600" 
+                            : "bg-green-500 hover:bg-green-600"
+                        } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
                         onClick={() => handleOpenDeleteModal(producto)}
                       >
-                        <TrashIcon className="h-4 w-4" />
+                        {producto.activo ? (
+                          <TrashIcon className="h-4 w-4" />
+                        ) : (
+                          <ArrowPathIcon className="h-4 w-4" />
+                        )}
                       </button>
                     </td>
                   </PermissionWrapper>

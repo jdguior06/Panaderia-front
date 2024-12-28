@@ -4,8 +4,9 @@ import {
   fetchProductoApi,
   addProductoApi,
   updateProductoApi,
-  deleteProductoApi,
   fetchProductosConsolidadosApi,
+  desactivarProductoApi,
+  activarProductoApi,
 } from '../services/productoServices';  // Importamos los servicios API
 
 // Thunks para las acciones asíncronas
@@ -45,9 +46,18 @@ export const updateProducto = createAsyncThunk('productos/updateProducto', async
   }
 });
 
-export const deleteProducto = createAsyncThunk('productos/deleteProducto', async (id, { rejectWithValue }) => {
+export const deleteProducto = createAsyncThunk('productos/desactivarProducto', async (id, { rejectWithValue }) => {
   try {
-    await deleteProductoApi(id);
+    await desactivarProductoApi(id);
+    return { id };
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const activarProducto = createAsyncThunk('productos/activarProducto', async (id, { rejectWithValue }) => {
+  try {
+    await activarProductoApi(id);
     return { id };
   } catch (error) {
     return rejectWithValue(error.message);
@@ -117,6 +127,15 @@ const productoSlice = createSlice({
       })
 
       .addCase(deleteProducto.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // activar producto
+      .addCase(activarProducto.fulfilled, (state, action) => {
+        state.productos = state.productos.filter(producto => producto.id !== action.payload.id);
+      })
+
+      .addCase(activarProducto.rejected, (state, action) => {
         state.error = action.payload;
       })
 

@@ -69,3 +69,12 @@ export const deleteAlmacenApi = async (idSucursal, idAlmacen) => {
     throw new Error(error.response?.data?.message || 'Error al desactivar el almacén');
   }
 };
+
+export const activarAlmacenApi = async (idSucursal, idAlmacen) => {
+  try {
+    await api.patch(`/sucursales/${idSucursal}/almacen/${idAlmacen}/activar`);
+    return idAlmacen;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al activar el almacén');
+  }
+};

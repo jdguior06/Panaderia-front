@@ -61,7 +61,7 @@ const CategoriaModal = ({ open, onClose, selectedCategoria, onSave, isEditing })
               value={formData.descripcion}
               onChange={onChange}
               className="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              required
+              // required
             />
           </div>
           <div className="flex justify-end space-x-3">

@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   fetchCajasApi,
-  fetchCajaApi,
   addCajaApi,
   updateCajaApi,
   deleteCajaApi,
+  activarCajaApi,
 } from '../services/cajaServices';
 
 // Obtener todas las cajas de una sucursal
@@ -59,6 +59,18 @@ export const deleteCaja = createAsyncThunk(
   }
 );
 
+export const activarCaja = createAsyncThunk(
+  'cajas/activarCaja',
+  async ({ idSucursal, idCaja }, { rejectWithValue }) => {
+    try {
+      await activarCajaApi(idSucursal, idCaja);
+      return { idCaja };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const cajaSlice = createSlice({
   name: 'cajas',
   initialState: {
@@ -98,6 +110,10 @@ const cajaSlice = createSlice({
 
       // Delete caja (desactivar)
       .addCase(deleteCaja.fulfilled, (state, action) => {
+        state.cajas = state.cajas.filter(caja => caja.id !== action.payload.idCaja);
+      })
+
+      .addCase(activarCaja.fulfilled, (state, action) => {
         state.cajas = state.cajas.filter(caja => caja.id !== action.payload.idCaja);
       });
   },

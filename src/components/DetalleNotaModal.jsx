@@ -63,10 +63,10 @@ const DetallesNotaModal = ({ nota, onClose }) => {
                   {detalle.cantidad}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  ${detalle.costoUnitario}
+                  Bs. {detalle.costoUnitario}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  ${detalle.subTotal}
+                  Bs. {detalle.subTotal}
                 </td>
               </tr>
             ))}

@@ -7,6 +7,7 @@ import {
   addAlmacenApi,
   updateAlmacenApi,
   deleteAlmacenApi,
+  activarAlmacenApi,
 } from '../services/almacenServices';
 
 // Obtener almacenes de una sucursal
@@ -100,6 +101,18 @@ export const deleteAlmacen = createAsyncThunk(
   }
 );
 
+export const activarAlmacen = createAsyncThunk(
+  'almacenes/activarAlmacen',
+  async ({ idSucursal, idAlmacen }, { rejectWithValue }) => {
+    try {
+      await activarAlmacenApi(idSucursal, idAlmacen);
+      return { idAlmacen };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 const almacenSlice = createSlice({
   name: 'almacenes',
   initialState: {
@@ -160,6 +173,13 @@ const almacenSlice = createSlice({
         state.almacenes = state.almacenes.filter((almacen) => almacen.id !== action.payload.idAlmacen);
       })
       .addCase(deleteAlmacen.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      .addCase(activarAlmacen.fulfilled, (state, action) => {
+        state.almacenes = state.almacenes.filter((almacen) => almacen.id !== action.payload.idAlmacen);
+      })
+      .addCase(activarAlmacen.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

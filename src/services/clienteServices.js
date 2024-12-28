@@ -1,10 +1,23 @@
-import api from '../utils/api';  // Esto sigue siendo tu instancia de Axios configurada
+import api from '../utils/api';  
 
 export const fetchClientesApi = async () => {
   try {
     const response = await api.get('/cliente');
     if (response.data.statusCode === 200) {
-      return response.data.data;  // Devuelve la lista de clientes
+      return response.data.data; 
+    } else {
+      throw new Error(response.data.message || "Error al obtener clientes");
+    }
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Error de red");
+  }
+};
+
+export const fetchClientesActivosApi = async () => {
+  try {
+    const response = await api.get('/cliente/activos');
+    if (response.data.statusCode === 200) {
+      return response.data.data;  
     } else {
       throw new Error(response.data.message || "Error al obtener clientes");
     }
@@ -44,6 +57,19 @@ export const deleteClienteApi = async (id) => {  // Nuevo método para eliminar 
     const response = await api.patch(`/cliente/${id}/desactivar`);
     if (response.data.statusCode === 200) {
       return response.data.data;  // Devuelve la confirmación de desactivación
+    } else {
+      throw new Error(response.data.message || "Error al eliminar cliente");
+    }
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Error de red");
+  }
+};
+
+export const activarClienteApi = async (id) => {  
+  try {
+    const response = await api.patch(`/cliente/${id}/activar`);
+    if (response.data.statusCode === 200) {
+      return response.data.data;  
     } else {
       throw new Error(response.data.message || "Error al eliminar cliente");
     }

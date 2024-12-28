@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from "react-router-dom";
-import Home from "./pages/Home";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import PlanPage from "./pages/CatalogoPlanes";
 import ProductosPage from "./pages/ProductosPage";
 import CategoriasPage from "./pages/CategoriasPage";
@@ -18,18 +23,22 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import Dashboard from "./layouts/Dashboard";
 import Navbar1 from "./components/Navbar1";
 import { useDispatch } from "react-redux";
-import { clearAuth, setAuth } from "./reducers/authSlice";
+import { clearAuth } from "./reducers/authSlice";
 import PermisosPage from "./pages/PermisosPage";
 import RolesPage from "./pages/RolesPage";
 import UsuariosPage from "./pages/UsuariosPage";
 import { ThemeProvider } from "./context/ThemeContext";
 import ThemeSettings from "./pages/ThemeSettings";
-import api from './utils/api';
+import api from "./utils/api";
 import InventarioPage from "./pages/InventarioPage";
 import NotasEntradaPage from "./pages/NotasEntradaPage";
 import ReportePage from "./pages/ReportePage";
 import PosPage from "./pages/PosPage";
-
+import VentasPage from "./pages/VentasPage";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import HomePage from "./pages/HomePage";
+import Home from "./pages/Home";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,12 +49,12 @@ function App() {
       const authData = JSON.parse(localStorage.getItem("auth"));
       if (authData?.token) {
         try {
-          const response = await api.get('/auth/me');
+          const response = await api.get("/auth/me");
           if (!response.data) {
             dispatch(clearAuth());
           }
         } catch (error) {
-          dispatch(clearAuth()); // Elimina el estado si el token es inválido o ha expirado
+          dispatch(clearAuth()); 
         }
       } else {
         dispatch(clearAuth());
@@ -66,48 +75,78 @@ function App() {
 
   return (
     <ThemeProvider>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Router>
-      <Routes>
-        {/* Rutas donde se muestra Navbar1 */}
-        <Route element={<NavbarLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/planes" element={<PlanPage />} />
-          <Route path="/registro" element={<Registro />} />
-        </Route>
-
-        {/* Otras rutas protegidas con el Navbar diferente o sin Navbar */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Dashboard selectedSucursal={selectedSucursal} />}>
-            <Route path="/dashboard" element={<Home />} />
-            <Route path="/clientes" element={<ClientesPage />} />
-            <Route path="/proveedores" element={<ProveedoresPage />} />
-            <Route path="/productos" element={<ProductosPage />} />
-            <Route path="/categorias" element={<CategoriasPage />} />
-            <Route path="/reportes" element={<ReportePage />} />
-            <Route path="/roles" element={<RolesPage />} />
-            <Route path="/permisos" element={<PermisosPage />} />
-            <Route path="/usuarios" element={<UsuariosPage />} />
-            <Route path="/temas" element={<ThemeSettings />} />
-            <Route path="/sucursales" element={<SucursalesPage setSelectedSucursal={setSelectedSucursal} />} />
-            <Route path="/sucursales/:id/panel" element={<SucursalPanel selectedSucursal={selectedSucursal} />}>
-              <Route index element={<Navigate to="almacenes" replace />} />
-              <Route path="almacenes" element={<AlmacenesPage />} />
-              <Route path="cajas" element={<CajasPage />} />
-               <Route path="/sucursales/:id/panel/almacenes/:idAlmacen" element={<InventarioPage />} />
-              <Route path="/sucursales/:id/panel/almacenes/:idAlmacen/notas-entrada" element={<NotasEntradaPage />} />
-            </Route>
-            {/* Ruta directa para configuración y backup */}
-            <Route path="/settings" element={<ConfiguracionForm />} />
-            <Route path="/backup" element={<BackupForm />} />
+        <Routes>
+          {/* Rutas donde se muestra Navbar1 */}
+          <Route element={<NavbarLayout />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/planes" element={<PlanPage />} />
+            <Route path="/registro" element={<Registro />} />
           </Route>
-          {/* <Route path="cajas/:cajaId/sesion" element={<PosPage />} /> */}
-          <Route path="cajas/:cajaId/sesion/:sesionId" element={<PosPage />} />
-        </Route>
-        {/* Ruta para cualquier otro acceso a rutas inválidas */}
-        <Route path="*" element={<Navigate to="/home" />} />
-      </Routes>
-    </Router>
+
+          {/* Otras rutas protegidas con el Navbar diferente o sin Navbar */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Dashboard selectedSucursal={selectedSucursal} />}>
+              <Route path="/dashboard" element={<Home />} />
+              <Route path="/clientes" element={<ClientesPage />} />
+              <Route path="/proveedores" element={<ProveedoresPage />} />
+              <Route path="/productos" element={<ProductosPage />} />
+              <Route path="/categorias" element={<CategoriasPage />} />
+              <Route path="/reportes" element={<ReportePage />} />
+              <Route path="/roles" element={<RolesPage />} />
+              <Route path="/permisos" element={<PermisosPage />} />
+              <Route path="/usuarios" element={<UsuariosPage />} />
+              <Route path="/ventas" element={<VentasPage />} />
+              <Route path="/temas" element={<ThemeSettings />} />
+              <Route
+                path="/sucursales"
+                element={
+                  <SucursalesPage setSelectedSucursal={setSelectedSucursal} />
+                }
+              />
+              <Route
+                path="/sucursales/:id/panel"
+                element={<SucursalPanel selectedSucursal={selectedSucursal} />}
+              >
+                <Route index element={<Navigate to="almacenes" replace />} />
+                <Route path="almacenes" element={<AlmacenesPage />} />
+                <Route path="cajas" element={<CajasPage />} />
+                <Route
+                  path="/sucursales/:id/panel/almacenes/:idAlmacen"
+                  element={<InventarioPage />}
+                />
+                <Route
+                  path="/sucursales/:id/panel/almacenes/:idAlmacen/notas-entrada"
+                  element={<NotasEntradaPage />}
+                />
+              </Route>
+              {/* Ruta directa para configuración y backup */}
+              <Route path="/settings" element={<ConfiguracionForm />} />
+              <Route path="/backup" element={<BackupForm />} />
+            </Route>
+            {/* <Route path="cajas/:cajaId/sesion" element={<PosPage />} /> */}
+            <Route
+              path="cajas/:cajaId/sesion/:sesionId"
+              element={<PosPage />}
+            />
+          </Route>
+          {/* Ruta para cualquier otro acceso a rutas inválidas */}
+          <Route path="*" element={<Navigate to="/home" />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 }

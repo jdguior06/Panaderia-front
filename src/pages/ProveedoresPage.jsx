@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProveedores, addProveedor, updateProveedor, deleteProveedor } from "../reducers/proveedorSlice";
+import { fetchProveedores, addProveedor, updateProveedor, deleteProveedor, activarProveedor } from "../reducers/proveedorSlice";
 import ProveedorModal from "../components/ProveedorModal";
 import ProveedorDeleteModal from "../components/ProveedorDeleteModal";
+import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import ThemedButton from "../components/ThemedButton";
 
 const ProveedoresPage = () => {
   const dispatch = useDispatch();
@@ -43,7 +45,12 @@ const ProveedoresPage = () => {
   };
 
   const handleDelete = async (id) => {
-    await dispatch(deleteProveedor(id));
+    const proveedor = proveedores.find((p) => p.id === id);
+    if (proveedor.activo) {
+      await dispatch(deleteProveedor(id));
+    } else {
+      await dispatch(activarProveedor(id));
+    }
     setOpenDeleteModal(false);
     dispatch(fetchProveedores());
   };
@@ -99,12 +106,11 @@ const ProveedoresPage = () => {
           />
 
           {/* Botón para crear proveedor */}
-          <button
-            className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-lg shadow-sm transition transform hover:scale-105"
+          <ThemedButton variant="primary"
             onClick={() => handleOpenModal()}
           >
             Crear Proveedor
-          </button>
+          </ThemedButton>
 
           {/* Checkbox para mostrar inactivos */}
           <div className="flex items-center">
@@ -138,18 +144,26 @@ const ProveedoresPage = () => {
                   <td className="border-b border-gray-200 py-3 px-4">{proveedor.email}</td>
                   <td className="border-b border-gray-200 py-3 px-4">{proveedor.telefono}</td>
                   <td className="border-b border-gray-200 py-3 px-4">{proveedor.direccion}</td>
-                  <td className="border-b border-gray-200 py-3 px-4">
+                  <td className="py-3 px-4 flex space-x-2">
                     <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105 mr-2"
+                      className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
                       onClick={() => handleOpenModal(proveedor)}
                     >
-                      Editar
+                      <PencilSquareIcon className="h-4 w-4" />
                     </button>
                     <button
-                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105"
+                      className={`${
+                        proveedor.activo 
+                          ? "bg-red-500 hover:bg-red-600" 
+                          : "bg-green-500 hover:bg-green-600"
+                      } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
                       onClick={() => handleOpenDeleteModal(proveedor)}
                     >
-                      Eliminar
+                      {proveedor.activo ? (
+                      <TrashIcon className="h-4 w-4" />
+                    ) : (
+                      <ArrowPathIcon className="h-4 w-4" />
+                    )}
                     </button>
                   </td>
                 </tr>

@@ -1,7 +1,10 @@
 import PropTypes from "prop-types";
 
 const ProductoDeleteModal = ({ open, onClose, selectedProduct, onDelete }) => {
-  if (!open) return null;  // Si el modal no está abierto, no se renderiza nada
+
+  if (!open) return null;  
+
+  const isActive = selectedProduct?.activo;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -14,16 +17,18 @@ const ProductoDeleteModal = ({ open, onClose, selectedProduct, onDelete }) => {
         </p>
         <div className="mb-6 text-center">
           <h3 className="text-xl font-semibold text-gray-800">
-            ¿Estás seguro de eliminar el producto{" "}
+          ¿Estás seguro de {isActive ? 'desactivar' : 'activar'} el producto{" "}
             <span className="font-bold">{selectedProduct?.nombre}</span>?
           </h3>
         </div>
         <div className="flex justify-center space-x-4">
           <button
-            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md"
-            onClick={() => onDelete(selectedProduct.id)}  // Llama a onDelete con el ID del producto
+            className={`${
+              isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
+            } text-white py-2 px-4 rounded-lg`}
+            onClick={() => onDelete(selectedProduct.id)}  
           >
-            Eliminar
+            {isActive ? 'Desactivar' : 'Activar'}
           </button>
           <button
             className="bg-gray-300 hover:bg-gray-400 text-black py-2 px-4 rounded-lg shadow-md"
@@ -38,10 +43,10 @@ const ProductoDeleteModal = ({ open, onClose, selectedProduct, onDelete }) => {
 };
 
 ProductoDeleteModal.propTypes = {
-  open: PropTypes.bool.isRequired,  // Indica si el modal está abierto
-  onClose: PropTypes.func.isRequired,  // Función para cerrar el modal
-  selectedProduct: PropTypes.object,  // El producto seleccionado para eliminar
-  onDelete: PropTypes.func.isRequired,  // Función para confirmar la eliminación
+  open: PropTypes.bool.isRequired,  
+  onClose: PropTypes.func.isRequired,  
+  selectedProduct: PropTypes.object,  
+  onDelete: PropTypes.func.isRequired,  
 };
 
 export default ProductoDeleteModal;

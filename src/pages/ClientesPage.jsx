@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClientes, addCliente, updateCliente, deleteCliente } from "../reducers/clienteSlice";
+import { fetchClientes, addCliente, updateCliente, deleteCliente, activarCliente } from "../reducers/clienteSlice";
 import ClienteModal from "../components/ClienteModal";
 import ClienteDeleteModal from "../components/ClienteDeleteModal";
 import { useTheme } from "../context/ThemeContext"; // Importa useTheme para usar los colores del tema
+import ThemedButton from "../components/ThemedButton";
+import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const ClientesPage = () => {
   const dispatch = useDispatch();
@@ -35,7 +37,12 @@ const ClientesPage = () => {
   };
 
   const handleDelete = async (id) => {
-    await dispatch(deleteCliente(id));
+    const cliente = clientes.find((c) => c.id === id);
+    if (cliente.activo) {
+      await dispatch(deleteCliente(id));
+    } else {
+      await dispatch(activarCliente(id));
+    }
     setOpenDeleteModal(false);
     dispatch(fetchClientes());
   };
@@ -93,26 +100,22 @@ const ClientesPage = () => {
           <input
             type="text"
             placeholder="Buscar Cliente"
-            className="border rounded-lg py-2 px-4 w-1/2 shadow-sm focus:outline-none focus:ring-2 transition"
-            style={{ color: theme.textColor, backgroundColor: theme.backgroundColor, borderColor: theme.primaryColor }}
+            className="border border-gray-300 rounded-lg py-2 px-4 w-1/2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <button
-            className="py-2 px-6 rounded-lg shadow-sm transition transform hover:scale-105"
-            style={{ backgroundColor: theme.primaryColor, color: theme.textColor }}
+          <ThemedButton variant="primary"
             onClick={() => handleOpenModal()}
           >
             Crear Cliente
-          </button>
+          </ThemedButton>
 
           <div className="flex items-center">
             <input
               type="checkbox"
               id="showInactive"
-              className="mr-2 h-4 w-4 border rounded transition"
-              style={{ backgroundColor: theme.backgroundColor, borderColor: theme.primaryColor }}
+              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
               checked={showInactive}
               onChange={() => setShowInactive(!showInactive)}
             />
@@ -122,8 +125,8 @@ const ClientesPage = () => {
 
         {/* Tabla de clientes */}
         <div className="overflow-x-auto">
-          <table className="min-w-full border rounded-lg shadow-lg" style={{ backgroundColor: theme.backgroundColor }}>
-            <thead className="text-gray-700" style={{ color: theme.textColor, backgroundColor: theme.primaryColor }}>
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+            <thead className="bg-gray-100 text-gray-700">
               <tr>
                 <th className="border-b py-3 px-4 text-left">ID</th>
                 <th className="border-b py-3 px-4 text-left">Nombre</th>
@@ -143,20 +146,26 @@ const ClientesPage = () => {
                   <td className="border-b py-3 px-4">{`${cliente.nombre} ${cliente.apellido}`}</td>
                   <td className="border-b py-3 px-4">{cliente.email || 'No disponible'}</td>
                   <td className="border-b py-3 px-4">{cliente.nit || 'No disponible'}</td>
-                  <td className="border-b py-3 px-4">
+                  <td className="py-3 px-4 flex space-x-2">
                     <button
-                      className="py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105 mr-2"
-                      style={{ backgroundColor: theme.primaryColor, color: theme.textColor }}
+                      className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
                       onClick={() => handleOpenModal(cliente)}
                     >
-                      Editar
+                      <PencilSquareIcon className="h-4 w-4" />
                     </button>
                     <button
-                      className="py-1 px-3 rounded-lg shadow-sm transition transform hover:scale-105"
-                      style={{ backgroundColor: '#FF4B4B', color: theme.textColor }}
+                      className={`${
+                        cliente.activo 
+                          ? "bg-red-500 hover:bg-red-600" 
+                          : "bg-green-500 hover:bg-green-600"
+                      } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
                       onClick={() => handleOpenDeleteModal(cliente)}
                     >
-                      Eliminar
+                      {cliente.activo ? (
+                      <TrashIcon className="h-4 w-4" />
+                    ) : (
+                      <ArrowPathIcon className="h-4 w-4" />
+                    )}
                     </button>
                   </td>
                 </tr>
@@ -171,12 +180,11 @@ const ClientesPage = () => {
             {Array.from({ length: Math.ceil(filteredClientes.length / clientsPerPage) }, (_, i) => (
               <button
                 key={i + 1}
-                className={`px-4 py-2 rounded-lg border shadow-sm transition`}
-                style={{
-                  backgroundColor: currentPage === i + 1 ? theme.primaryColor : theme.backgroundColor,
-                  color: currentPage === i + 1 ? theme.textColor : theme.textColor,
-                  borderColor: theme.primaryColor,
-                }}
+                className={`px-4 py-2 rounded-lg border ${
+                  currentPage === i + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-200"
+                } border-gray-300 shadow-sm transition`}
                 onClick={() => paginate(i + 1)}
               >
                 {i + 1}

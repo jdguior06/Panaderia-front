@@ -9,10 +9,14 @@ import {
 } from "../reducers/cartSlice";
 import { fetchProductosConsolidados } from "../reducers/productoSlice";
 import { fetchClientes, addCliente } from "../reducers/clienteSlice";
-import { realizarVenta, cierreCaja } from "../reducers/cajaSesionSlice";
+import { cierreCaja } from "../reducers/cajaSesionSlice";
+import { realizarVenta } from "../reducers/ventaSlice";
 import { useTheme } from "../context/ThemeContext";
 import ClienteModal from "../components/ClienteModal";
 import MetodoPagoModal from "../components/MetodoPagoModal";
+import InvoiceModal from "../components/InvoiceModal";
+import CierreCajaModal from "../components/CierreCajaModal";
+import { toast } from "react-toastify";
 
 const PosPage = () => {
   const dispatch = useDispatch();
@@ -36,10 +40,14 @@ const PosPage = () => {
   const [isClienteModalOpen, setIsClienteModalOpen] = useState(false);
   const [isMetodoPagoModalOpen, setIsMetodoPagoModalOpen] = useState(false);
   const [metodosPago, setMetodosPago] = useState([]);
-  const [ventaPendiente, setVentaPendiente] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [clienteSearchTerm, setClienteSearchTerm] = useState("");
   const [errorVenta, setErrorVenta] = useState("");
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [ventaData, setVentaData] = useState(null);
+
+  const [showCierreModal, setShowCierreModal] = useState(false);
+  const [sesionData, setSesionData] = useState(null);
 
   useEffect(() => {
     if (idSucursal) {
@@ -51,13 +59,15 @@ const PosPage = () => {
     }
   }, [dispatch, idSucursal, navigate]);
 
-  // Ejecuta la venta solo cuando `metodosPago` esté actualizado
-  useEffect(() => {
-    if (ventaPendiente) {
-      handleConfirmarVenta();
-      setVentaPendiente(false); // Resetea el estado
-    }
-  }, [ventaPendiente, metodosPago]);
+  const resetStateAfterSale = () => {
+    setSelectedCliente(null);
+    setIsClienteModalOpen(false);
+    setIsMetodoPagoModalOpen(false);
+    setMetodosPago([]);
+    setSearchTerm("");
+    setClienteSearchTerm("");
+    setErrorVenta("");
+  };
 
   const handleAddToCart = (product) => dispatch(addToCart(product));
   const handleRemoveFromCart = (productId) =>
@@ -82,61 +92,104 @@ const PosPage = () => {
       alert("El carrito está vacío. Agrega productos antes de pagar.");
       return;
     }
+    if (selectedCliente && !selectedCliente.id) {
+      alert(
+        "Error: El cliente seleccionado no tiene un ID válido. Por favor, seleccione el cliente nuevamente."
+      );
+      return;
+    }
     setErrorVenta("");
     setIsMetodoPagoModalOpen(true);
   };
 
-  const handleConfirmarVenta = async () => {
-    console.log("Estado de metodosPago en POS:", metodosPago);
-
-    const sumaPagos = metodosPago.reduce(
-      (acc, metodo) => acc + parseFloat(metodo.monto || 0),
-      0
-    );
-
-    if (sumaPagos < total) {
-      setErrorVenta(
-        `El total de los métodos de pago (${sumaPagos.toFixed(
-          2
-        )}) no cubre el total de la venta (${total.toFixed(2)}).`
-      );
-      return;
-    }
-
-    const ventaData = {
-      id_cliente: selectedCliente ? selectedCliente.id : null,
-      id_caja_sesion: parseInt(sesionId),
-      detalleVentaDTOS: cartItems.map((item) => ({
-        id_producto: item.id,
-        cantidad: item.cantidad,
-      })),
-      metodosPago,
-    };
-
-    console.log("Datos enviados a la API:", JSON.stringify(ventaData, null, 2));
-
+  const handleConfirmarVenta = async (metodosPago) => {
     try {
-      await dispatch(realizarVenta(ventaData));
-      alert("Venta realizada con éxito");
+      if (cartItems.length === 0) {
+        toast.error("No hay productos en el carrito");
+        return;
+      }
+
+      if (!selectedCliente) {
+        toast.error("Por favor seleccione un cliente");
+        return;
+      }
+
+      if (!metodosPago || metodosPago.length === 0) {
+        toast.error("Debe especificar al menos un método de pago");
+        return;
+      }
+
+      const sumaPagos = metodosPago.reduce(
+        (acc, metodo) => acc + parseFloat(metodo.monto || 0),
+        0
+      );
+
+      if (sumaPagos < total) {
+        toast.error(
+          `El monto total de pago (${sumaPagos.toFixed(
+            2
+          )}) es menor al total de la venta (${total.toFixed(2)})`
+        );
+        return;
+      }
+
+      for (const item of cartItems) {
+        const product = products.find((p) => p.producto.id === item.id);
+        if (!product || product.totalStock < item.cantidad) {
+          toast.error(`Stock insuficiente para el producto: ${item.nombre}`);
+          return;
+        }
+      }
+      const ventaData = {
+        id_cliente: selectedCliente ? selectedCliente.id : null,
+        id_caja_sesion: parseInt(sesionId),
+        detalleVentaDTOS: cartItems.map((item) => ({
+          id_producto: item.id,
+          cantidad: item.cantidad,
+          nombreProducto: item.nombre,
+          precioVenta: item.precioVenta,
+        })),
+        metodosPago,
+        total,
+        cliente: selectedCliente,
+      };
+
+      console.log(
+        "Datos enviados a la API:",
+        JSON.stringify(ventaData, null, 2)
+      );
+
+      await dispatch(realizarVenta(ventaData)).unwrap();
+      toast.success("Venta realizada con éxito");
+      setVentaData(ventaData);
+      setShowInvoice(true);
       dispatch(clearCart());
-      setSelectedCliente(null);
       dispatch(fetchProductosConsolidados(idSucursal));
       dispatch(fetchClientes());
-
-      setMetodosPago([]);
+      resetStateAfterSale();
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      toast.error(error.message || "Error al realizar la venta");
+      console.error("Error completo:", error);
     }
   };
 
   const handleCierreCaja = async () => {
     try {
-      await dispatch(cierreCaja(sesionId));
+      const response = await dispatch(cierreCaja(sesionId)).unwrap();
       alert("Caja cerrada con éxito");
-      navigate("/dashboard");
+      setShowCierreModal(true);
+      setSesionData(response);
     } catch (error) {
       alert(`Error al cerrar la caja: ${error.message}`);
     }
+  };
+
+  const handlePrintInvoice = () => {
+    window.print(); // Imprime la página actual
+  };
+
+  const handleCloseInvoice = () => {
+    setShowInvoice(false);
   };
 
   const filteredProducts = products.filter((product) =>
@@ -151,6 +204,17 @@ const PosPage = () => {
       cliente.email?.toLowerCase().includes(clienteSearchTerm.toLowerCase()) ||
       cliente.nit?.toString().includes(clienteSearchTerm)
   );
+
+  useEffect(() => {
+    if (selectedCliente) {
+      console.log("Cliente seleccionado:", selectedCliente);
+      // Verificar que el cliente tenga un ID válido
+      if (!selectedCliente.id) {
+        console.error("Cliente seleccionado sin ID válido");
+        setSelectedCliente(null);
+      }
+    }
+  }, [selectedCliente]);
 
   return (
     <div style={{ color: theme.textColor }}>
@@ -176,10 +240,26 @@ const PosPage = () => {
           onClose={() => setIsMetodoPagoModalOpen(false)}
           total={total}
           onSave={(selectedMetodosPago) => {
-            setMetodosPago(selectedMetodosPago);
+            console.log("Métodos de pago recibidos:", selectedMetodosPago);
             setIsMetodoPagoModalOpen(false); // Cierra el modal
-            setVentaPendiente(true); // Indica que la venta está pendiente
+            handleConfirmarVenta(selectedMetodosPago); // Indica que la venta está pendiente
           }}
+        />
+
+        <InvoiceModal
+          open={showInvoice}
+          ventaData={ventaData}
+          onClose={handleCloseInvoice}
+          onPrint={handlePrintInvoice}
+        />
+
+        <CierreCajaModal
+          open={showCierreModal}
+          onClose={() => {
+            setShowCierreModal(false);
+            navigate("/dashboard");
+          }}
+          sesionData={sesionData}
         />
 
         <div className="md:col-span-2">
@@ -229,7 +309,7 @@ const PosPage = () => {
                   <p className="text-gray-600 mb-1">
                     Precio:{" "}
                     <span className="text-gray-800 font-semibold">
-                      ${product.producto.precioVenta.toFixed(2)}
+                      Bs. {product.producto.precioVenta.toFixed(2)}
                     </span>
                   </p>
                   <p
@@ -278,10 +358,10 @@ const PosPage = () => {
                         {item.nombre}
                       </h3>
                       <p className="text-gray-500 text-sm">
-                        Precio: ${item.precioVenta.toFixed(2)}
+                        Precio: Bs. {item.precioVenta.toFixed(2)}
                       </p>
                       <p className="text-gray-500 text-sm">
-                        Total: ${(item.precioVenta * item.cantidad).toFixed(2)}
+                        Total: Bs. {(item.precioVenta * item.cantidad).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -363,7 +443,7 @@ const PosPage = () => {
               <div className="mt-6">
                 <h3 className="text-xl font-semibold text-gray-700 flex justify-between">
                   <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>Bs. {total.toFixed(2)}</span>
                 </h3>
               </div>
             </div>
@@ -381,13 +461,14 @@ const PosPage = () => {
               className="border rounded-lg px-4 py-2 w-full shadow-sm focus:ring-2 focus:ring-blue-500 placeholder-gray-400 text-gray-700 mb-4"
             />
             <select
-              onChange={(e) =>
-                setSelectedCliente(
-                  clientes.find(
-                    (cliente) => cliente.id === Number(e.target.value)
-                  ) || null
-                )
-              }
+              value={selectedCliente?.id || ""}
+              onChange={(e) => {
+                const clienteId = Number(e.target.value);
+                const clienteSeleccionado = clientes.find(
+                  (cliente) => cliente.id === clienteId
+                );
+                setSelectedCliente(clienteSeleccionado || null);
+              }}
               className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Sin cliente (anónimo)</option>
@@ -407,7 +488,7 @@ const PosPage = () => {
               onClick={handlePagar}
               className="mt-4 w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 text-lg font-bold"
             >
-              Pagar ${total.toFixed(2)}
+              Pagar Bs. {total.toFixed(2)}
             </button>
           </div>
         </div>

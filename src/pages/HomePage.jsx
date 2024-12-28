@@ -27,7 +27,7 @@ const HomePage = () => {
         </div>
 
         <div className="text-gray-500 text-lg font-semibold">
-          <p className="text-2xl">US$ 7.25 al mes</p>
+          <p className="text-2xl">Bs- 49.99 al mes</p>
           <p>por TODAS las aplicaciones</p>
         </div>
       </section>

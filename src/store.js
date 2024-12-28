@@ -14,6 +14,7 @@ import productoAlmacenReducer from './reducers/productAlmacenSlice';
 import notaEntradaReducer from './reducers/notaEntradaSlice';
 import cajaSesionReducer from './reducers/cajaSesionSlice';
 import cartReducer from './reducers/cartSlice'
+import ventaReducer from './reducers/ventaSlice'
 import { setAuthInterceptor } from './utils/api';
 
 const authData = JSON.parse(localStorage.getItem('auth'));
@@ -45,6 +46,7 @@ export const store = configureStore({
     notasEntrada: notaEntradaReducer,
     cajaSesion: cajaSesionReducer,
     cart: cartReducer,
+    venta: ventaReducer,
   },
   preloadedState,
 });

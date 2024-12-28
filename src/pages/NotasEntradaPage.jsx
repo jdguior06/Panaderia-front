@@ -96,7 +96,7 @@ const NotaEntradaPage = () => {
                     {/* <p><strong>Proveedor:</strong> {nota.proveedorId}</p>
                 <p><strong>Almacén:</strong> {nota.almacenId}</p> */}
                     <p>
-                      <strong>Total:</strong> ${nota.total}
+                      <strong>Total:</strong> Bs. {nota.total}
                     </p>
                   </div>
                 )

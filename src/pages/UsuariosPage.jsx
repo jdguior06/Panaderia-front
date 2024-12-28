@@ -1,21 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   fetchUsuarios,
   deactivateUsuario,
-  activateUsuario
-} from '../reducers/usuarioSlice';
-import { fetchRoles } from '../reducers/rolSlice'; // Importa la acción para cargar roles
-import UsuarioModal from '../components/UsuarioModal';
-import { PlusIcon, PencilIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+  activateUsuario,
+} from "../reducers/usuarioSlice";
+import { fetchRoles } from "../reducers/rolSlice"; // Importa la acción para cargar roles
+import UsuarioModal from "../components/UsuarioModal";
+import {
+  PencilIcon,
+  XCircleIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/outline";
+import { useTheme } from "../context/ThemeContext";
+import ThemedButton from "../components/ThemedButton";
 
 const UsuariosPage = () => {
   const dispatch = useDispatch();
   const { usuarios, loading, error } = useSelector((state) => state.usuarios);
   const { roles } = useSelector((state) => state.roles); // Obtén la lista de roles desde el estado
+  const { theme } = useTheme();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [showOnlyActive, setShowOnlyActive] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
@@ -25,11 +32,13 @@ const UsuariosPage = () => {
   }, [dispatch]);
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
-  const handleCheckboxChange = (e) => setShowOnlyActive(e.target.checked);
+  const handleCheckboxChange = (e) => setShowInactive(e.target.checked);
 
   const filteredUsuarios = usuarios
-    .filter((usuario) => usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((usuario) => (showOnlyActive ? usuario.activo : true));
+    .filter((usuario) =>
+      usuario.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((usuario) => showInactive || usuario.activo);
 
   const openModal = (user = null) => {
     setEditingUser(user);
@@ -54,38 +63,41 @@ const UsuariosPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-lg border border-gray-200">
-      <h1 className="text-2xl font-semibold mb-6 text-gray-800">Gestión de Usuarios</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-gray-800">
+        Gestión de Usuarios
+      </h1>
 
       {/* Barra de Búsqueda */}
-      <div className="mb-6 flex items-center space-x-4">
+      <div className="flex justify-between items-center mb-6">
         <input
           type="text"
           placeholder="Buscar usuario..."
           value={searchTerm}
           onChange={handleSearchChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200 focus:outline-none"
+          className="border border-gray-300 rounded-lg py-2 px-4 w-1/2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
-        <label className="flex items-center space-x-2 text-gray-700">
-          <input
-            type="checkbox"
-            checked={showOnlyActive}
-            onChange={handleCheckboxChange}
-            className="form-checkbox h-5 w-5 text-blue-500 transition duration-150 ease-in-out"
-          />
-          <span>Solo activos</span>
+        <div className="flex items-center ml-4"></div>
+
+        <input
+          type="checkbox"
+          id="showInactive"
+          checked={showInactive}
+          onChange={handleCheckboxChange}
+          className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+        />
+        <label htmlFor="showInactive" style={{ color: theme.textColor }}>
+          Mostrar inactivos
         </label>
       </div>
 
-      {/* Botón Agregar Usuario */}
-      <button
+      <ThemedButton
+        variant="primary"
+        className="mb-6"
         onClick={() => openModal()}
-        className="mb-6 flex items-center space-x-2 bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition duration-200"
       >
-        <PlusIcon className="w-5 h-5" />
         <span>Agregar Usuario</span>
-      </button>
+      </ThemedButton>
 
-      {/* Lista de Usuarios */}
       <div className="overflow-x-auto">
         <table className="w-full mb-6 border border-gray-200">
           <thead>
@@ -93,7 +105,8 @@ const UsuariosPage = () => {
               <th className="py-3 px-4 border">Nombre</th>
               <th className="py-3 px-4 border">Apellido</th>
               <th className="py-3 px-4 border">Email</th>
-              <th className="py-3 px-4 border">Rol</th> {/* Nueva columna de Rol */}
+              <th className="py-3 px-4 border">Rol</th>{" "}
+              {/* Nueva columna de Rol */}
               <th className="py-3 px-4 border">Estado</th>
               <th className="py-3 px-4 border">Acciones</th>
             </tr>
@@ -105,7 +118,8 @@ const UsuariosPage = () => {
                 <td className="py-3 px-4 border">{usuario.apellido}</td>
                 <td className="py-3 px-4 border">{usuario.email}</td>
                 <td className="py-3 px-4 border text-center">
-                  {usuario.rol[0]?.nombre || "Sin rol"} {/* Muestra el rol o "Sin rol" si no existe */}
+                  {usuario.rol[0]?.nombre || "Sin rol"}{" "}
+                  {/* Muestra el rol o "Sin rol" si no existe */}
                 </td>
                 <td className="py-3 px-4 border text-center">
                   {usuario.activo ? (
@@ -131,7 +145,9 @@ const UsuariosPage = () => {
                   <button
                     onClick={() => toggleUserStatus(usuario.id, usuario.activo)}
                     className={`flex items-center ${
-                      usuario.activo ? "text-red-500 hover:text-red-600" : "text-green-500 hover:text-green-600"
+                      usuario.activo
+                        ? "text-red-500 hover:text-red-600"
+                        : "text-green-500 hover:text-green-600"
                     } transition duration-150`}
                   >
                     {usuario.activo ? (
