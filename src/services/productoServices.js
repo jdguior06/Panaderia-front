@@ -9,6 +9,15 @@ export const fetchProductosApi = async () => {
   }
 };
 
+export const fetchProductosActivosApi = async () => {
+  try {
+    const response = await api.get('/producto/activos');
+    return response.data.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener productos');
+  }
+};
+
 export const fetchProductoApi = async (id) => {
   try {
     const response = await api.get(`/producto/${id}`);

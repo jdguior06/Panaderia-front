@@ -19,6 +19,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import { verificarSesionAbierta } from "../reducers/cajaSesionSlice";
 import ThemedButton from "../components/ThemedButton";
+import { showNotification } from '../utils/toast';
 
 const CajasPage = () => {
   const dispatch = useDispatch();
@@ -80,7 +81,7 @@ const CajasPage = () => {
             state: { idSucursal: id },
           });
         } else {
-          alert(
+          showNotification.error(
             "La caja tiene una sesión abierta, pero pertenece a otro usuario."
           );
         }

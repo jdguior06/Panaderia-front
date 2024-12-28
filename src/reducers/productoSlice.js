@@ -7,12 +7,22 @@ import {
   fetchProductosConsolidadosApi,
   desactivarProductoApi,
   activarProductoApi,
+  fetchProductosActivosApi,
 } from '../services/productoServices';  // Importamos los servicios API
 
 // Thunks para las acciones asíncronas
 export const fetchProductos = createAsyncThunk('productos/fetchProductos', async (_, { rejectWithValue }) => {
   try {
     const data = await fetchProductosApi();
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.message);
+  }
+});
+
+export const fetchProductosActivos = createAsyncThunk('productos/fetchProductosActivos', async (_, { rejectWithValue }) => {
+  try {
+    const data = await fetchProductosActivosApi();
     return data;
   } catch (error) {
     return rejectWithValue(error.message);
@@ -98,6 +108,18 @@ const productoSlice = createSlice({
         state.productos = action.payload;
       })
       .addCase(fetchProductos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchProductosActivos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductosActivos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productos = action.payload;
+      })
+      .addCase(fetchProductosActivos.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

@@ -8,7 +8,7 @@ import { fetchAlmacenes } from "../reducers/almacenSlice";
 import { fetchProveedores } from "../reducers/proveedorSlice";
 import NotaEntradaForm from "../components/NotaEntradaModal";
 import DetallesNotaModal from "../components/DetalleNotaModal";
-import { fetchProductos } from "../reducers/productoSlice";
+import { fetchProductosActivos } from "../reducers/productoSlice";
 import { useParams } from "react-router-dom"; 
 
 const NotaEntradaPage = () => {
@@ -33,7 +33,7 @@ const NotaEntradaPage = () => {
       console.log("ID de Almacén:", idAlmacen);
 
       dispatch(fetchNotasBySucursalAlmacen({ idSucursal, idAlmacen }));
-      dispatch(fetchProductos());
+      dispatch(fetchProductosActivos());
       dispatch(fetchAlmacenes(idSucursal));
       dispatch(fetchProveedores());
     } else {

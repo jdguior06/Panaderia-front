@@ -17,6 +17,7 @@ import MetodoPagoModal from "../components/MetodoPagoModal";
 import InvoiceModal from "../components/InvoiceModal";
 import CierreCajaModal from "../components/CierreCajaModal";
 import { toast } from "react-toastify";
+import { showNotification } from "../utils/toast";
 
 const PosPage = () => {
   const dispatch = useDispatch();
@@ -78,18 +79,14 @@ const PosPage = () => {
   const handleOpenClienteModal = () => setIsClienteModalOpen(true);
 
   const handleSaveCliente = async (clienteData) => {
-    try {
-      const newCliente = await dispatch(addCliente(clienteData)).unwrap();
-      setSelectedCliente(newCliente);
-      setIsClienteModalOpen(false);
-    } catch (error) {
-      alert(`Error al agregar cliente: ${error.message}`);
-    }
+    await dispatch(addCliente(clienteData));
+    setIsClienteModalOpen(false);
+    dispatch(fetchClientes());
   };
 
   const handlePagar = () => {
     if (cartItems.length === 0) {
-      alert("El carrito está vacío. Agrega productos antes de pagar.");
+      showNotification.error("El carrito está vacío. Agrega productos antes de pagar.");
       return;
     }
     if (selectedCliente && !selectedCliente.id) {
@@ -185,7 +182,7 @@ const PosPage = () => {
   };
 
   const handlePrintInvoice = () => {
-    window.print(); // Imprime la página actual
+    window.print(); 
   };
 
   const handleCloseInvoice = () => {
@@ -232,7 +229,9 @@ const PosPage = () => {
         <ClienteModal
           open={isClienteModalOpen}
           onClose={() => setIsClienteModalOpen(false)}
+          selectedClient={null}
           onSave={handleSaveCliente}
+          isEditing={false}
         />
 
         <MetodoPagoModal
@@ -361,7 +360,8 @@ const PosPage = () => {
                         Precio: Bs. {item.precioVenta.toFixed(2)}
                       </p>
                       <p className="text-gray-500 text-sm">
-                        Total: Bs. {(item.precioVenta * item.cantidad).toFixed(2)}
+                        Total: Bs.{" "}
+                        {(item.precioVenta * item.cantidad).toFixed(2)}
                       </p>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const ClienteModal = ({ open, onClose, selectedClient, onSave, isEditing }) => {
@@ -90,7 +90,7 @@ const ClienteModal = ({ open, onClose, selectedClient, onSave, isEditing }) => {
               onChange={onChange}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="Correo Electrónico"
-              required
+              // required
             />
           </div>
           <div>
@@ -130,11 +130,11 @@ const ClienteModal = ({ open, onClose, selectedClient, onSave, isEditing }) => {
 };
 
 ClienteModal.propTypes = {
-  open: PropTypes.bool.isRequired,  // Indica si el modal está abierto
-  onClose: PropTypes.func.isRequired,  // Función para cerrar el modal
-  selectedClient: PropTypes.object,  // Cliente seleccionado para editar (puede ser null)
-  onSave: PropTypes.func.isRequired,  // Función para guardar el cliente (crear/editar)
-  isEditing: PropTypes.bool.isRequired,  // Indica si estamos en modo edición
+  open: PropTypes.bool.isRequired,  
+  onClose: PropTypes.func.isRequired, 
+  selectedClient: PropTypes.object,  
+  onSave: PropTypes.func.isRequired,  
+  isEditing: PropTypes.bool.isRequired,  
 };
 
 export default ClienteModal;

@@ -85,23 +85,22 @@ const ventaSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(realizarVenta.pending, (state) => {
-        state.loading = true;   // Activa el estado de carga
-        state.error = null;     // Limpia errores anteriores
-        state.ultimaVenta = null; // Limpia la última venta para evitar confusión
+        state.loading = true;   
+        state.error = null;     
+        state.ultimaVenta = null; 
       })
       .addCase(realizarVenta.fulfilled, (state, action) => {
-        state.loading = false; // Finaliza el estado de carga
-        state.ventas.push(action.payload); // Agrega la venta realizada al arreglo
-        state.ultimaVenta = action.payload; // Almacena la última venta realizada
+        state.loading = false; 
+        state.ventas.push(action.payload); 
+        state.ultimaVenta = action.payload; 
         state.error = null;
       })
       .addCase(realizarVenta.rejected, (state, action) => {
-        state.loading = false; // Finaliza el estado de carga
-        state.error = action.payload || 'Error al realizar la venta'; // Almacena el mensaje de error
+        state.loading = false; 
+        state.error = action.payload || 'Error al realizar la venta'; 
       });
   },
 });
 
-// Exporta los reducers para limpiar errores y última venta
 export const { limpiarError, limpiarUltimaVenta, limpiarDetalleVenta  } = ventaSlice.actions;
 export default ventaSlice.reducer;
