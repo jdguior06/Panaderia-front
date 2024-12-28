@@ -91,7 +91,7 @@ function App() {
         <Routes>
           {/* Rutas donde se muestra Navbar1 */}
           <Route element={<NavbarLayout />}>
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/planes" element={<PlanPage />} />
             <Route path="/registro" element={<Registro />} />
