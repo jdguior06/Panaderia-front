@@ -17,7 +17,7 @@ const ClientesPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showInactive, setShowInactive] = useState(true);
+  const [showInactive, setShowInactive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [clientsPerPage] = useState(5);
 

@@ -15,7 +15,7 @@ const ProveedoresPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProveedor, setSelectedProveedor] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showInactive, setShowInactive] = useState(true);  // Estado para el checkbox de mostrar inactivos
+  const [showInactive, setShowInactive] = useState(false);  // Estado para el checkbox de mostrar inactivos
   const [currentPage, setCurrentPage] = useState(1);  // Estado para la paginación
   const [proveedoresPerPage] = useState(5);  // Número de proveedores por página
 

@@ -8,7 +8,7 @@ import {
   clearCart,
 } from "../reducers/cartSlice";
 import { fetchProductosConsolidados } from "../reducers/productoSlice";
-import { fetchClientes, addCliente } from "../reducers/clienteSlice";
+import { addCliente, fetchClientesActivos } from "../reducers/clienteSlice";
 import { cierreCaja } from "../reducers/cajaSesionSlice";
 import { realizarVenta } from "../reducers/ventaSlice";
 import { useTheme } from "../context/ThemeContext";
@@ -53,7 +53,7 @@ const PosPage = () => {
   useEffect(() => {
     if (idSucursal) {
       dispatch(fetchProductosConsolidados(idSucursal));
-      dispatch(fetchClientes());
+      dispatch(fetchClientesActivos());
     } else {
       alert("ID de sucursal no encontrado. Redirigiendo al inicio.");
       navigate("/");
@@ -162,7 +162,7 @@ const PosPage = () => {
       setShowInvoice(true);
       dispatch(clearCart());
       dispatch(fetchProductosConsolidados(idSucursal));
-      dispatch(fetchClientes());
+      dispatch(fetchClientesActivos());
       resetStateAfterSale();
     } catch (error) {
       toast.error(error.message || "Error al realizar la venta");
@@ -474,7 +474,7 @@ const PosPage = () => {
               <option value="">Sin cliente (anónimo)</option>
               {filteredClientes.map((cliente) => (
                 <option key={cliente.id} value={cliente.id}>
-                  {cliente.email} - {cliente.nit || "Sin NIT"}
+                  {cliente.email || "Sin email"} - {cliente.nit || "Sin NIT"}
                 </option>
               ))}
             </select>
