@@ -8,7 +8,11 @@ import {
   activarAlmacen,
 } from "../reducers/almacenSlice";
 import AlmacenModal from "../components/AlmacenModal";
-import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import PermissionWrapper from "../components/PermissionWrapper";
 import { useParams, useNavigate } from "react-router-dom";
 import ThemedButton from "../components/ThemedButton";
@@ -24,10 +28,10 @@ const AlmacenesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showInactive, setShowInactive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; 
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    dispatch(fetchAlmacenes(id)); 
+    dispatch(fetchAlmacenes(id));
   }, [dispatch, id]);
 
   const handleOpenModal = (almacen = null) => {
@@ -104,25 +108,23 @@ const AlmacenesPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <PermissionWrapper permission="PERMISO_ADMINISTRAR_ALMACENES">
-            <ThemedButton variant="primary"
-              onClick={() => handleOpenModal()}
-            >
+            <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
               Crear Almacén
             </ThemedButton>
-          </PermissionWrapper>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="showInactive"
-              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-              checked={showInactive}
-              onChange={() => setShowInactive(!showInactive)}
-            />
-            <label htmlFor="showInactive" className="text-gray-700">
-              Mostrar inactivos
-            </label>
-          </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="showInactive"
+                className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+                checked={showInactive}
+                onChange={() => setShowInactive(!showInactive)}
+              />
+              <label htmlFor="showInactive" className="text-gray-700">
+                Mostrar inactivos
+              </label>
+            </div>
+          </PermissionWrapper>
         </div>
 
         {/* Lista de almacenes */}
@@ -145,27 +147,29 @@ const AlmacenesPage = () => {
               </p>
 
               <div className="flex justify-between items-center mt-4">
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
-                  onClick={() => handleOpenModal(almacen)}
-                >
-                  <PencilSquareIcon className="h-5 w-5 mr-1" />
-                </button>
+                <PermissionWrapper permission="PERMISO_ADMINISTRAR_ALMACENES">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
+                    onClick={() => handleOpenModal(almacen)}
+                  >
+                    <PencilSquareIcon className="h-5 w-5 mr-1" />
+                  </button>
 
-                <button
-                  className={`${
-                    almacen.activo
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-green-500 hover:bg-green-600"
-                  } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                  onClick={() => handleDelete(almacen.id)}
-                >
-                  {almacen.activo ? (
-                    <TrashIcon className="h-5 w-5 mr-1" />
-                  ) : (
-                    <ArrowPathIcon className="h-5 w-5 mr-1" />
-                  )}
-                </button>
+                  <button
+                    className={`${
+                      almacen.activo
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                    onClick={() => handleDelete(almacen.id)}
+                  >
+                    {almacen.activo ? (
+                      <TrashIcon className="h-5 w-5 mr-1" />
+                    ) : (
+                      <ArrowPathIcon className="h-5 w-5 mr-1" />
+                    )}
+                  </button>
+                </PermissionWrapper>
 
                 <button
                   className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg shadow-sm flex items-center"
@@ -174,6 +178,7 @@ const AlmacenesPage = () => {
                   <PencilSquareIcon className="h-5 w-5 mr-1" />
                   Seleccionar
                 </button>
+                
               </div>
             </div>
           ))}

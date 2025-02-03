@@ -3,6 +3,7 @@ import { clearAuth } from '../reducers/authSlice';
 
 const api = axios.create({
   baseURL: 'https://artistic-balance-production.up.railway.app/guior',
+  // baseURL: 'http://localhost:8080/guior',
 });
 
 export const setAuthInterceptor = (store) => {
@@ -22,7 +23,7 @@ export const setAuthInterceptor = (store) => {
     (error) => {
       if (error.response && error.response.status === 401) {
         store.dispatch(clearAuth());
-        window.location.href = '/login'; // Redirige después de limpiar auth
+        window.location.href = '/login'; 
       }
       return Promise.reject(error);
     }

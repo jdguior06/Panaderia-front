@@ -129,20 +129,21 @@ const ProductosPage = () => {
 
           {/* Checkbox para mostrar inactivos */}
           <div className="flex items-center ml-4">
-            <input
-              type="checkbox"
-              id="showInactive"
-              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-              checked={showInactive}
-              onChange={() => setShowInactive(!showInactive)}
-            />
-            <label htmlFor="showInactive" className="text-gray-700">
-              Mostrar inactivos
-            </label>
+            <PermissionWrapper permission="PERMISO_ADMINISTRAR_PRODUCTOS">
+              <input
+                type="checkbox"
+                id="showInactive"
+                className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+                checked={showInactive}
+                onChange={() => setShowInactive(!showInactive)}
+              />
+              <label htmlFor="showInactive" className="text-gray-700">
+                Mostrar inactivos
+              </label>
+            </PermissionWrapper>
           </div>
         </div>
 
-        {/* Tabla de productos */}
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
             <thead className="bg-gray-100 text-gray-700">
@@ -225,8 +226,8 @@ const ProductosPage = () => {
                       </button>
                       <button
                         className={`${
-                          producto.activo 
-                            ? "bg-red-500 hover:bg-red-600" 
+                          producto.activo
+                            ? "bg-red-500 hover:bg-red-600"
                             : "bg-green-500 hover:bg-green-600"
                         } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
                         onClick={() => handleOpenDeleteModal(producto)}
@@ -245,7 +246,6 @@ const ProductosPage = () => {
           </table>
         </div>
 
-        {/* Paginación */}
         <div className="flex justify-center mt-8">
           <nav className="inline-flex space-x-2">
             {Array.from(

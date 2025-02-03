@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchProductosAlmacen } from "../reducers/productAlmacenSlice";
+import ThemedButton from "../components/ThemedButton";
 
 const InventarioPage = () => {
   const dispatch = useDispatch();
@@ -37,20 +38,20 @@ const InventarioPage = () => {
         <span className="text-blue-600">{idAlmacen}</span>
       </h1>
 
-      <button
+      <ThemedButton variant="primary"
         onClick={() =>
           navigate(
             `/sucursales/${id}/panel/almacenes/${idAlmacen}/notas-entrada`
           )
         }
-        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 mb-6"
+        className="mb-6"
       >
         Ver Notas de Entrada
-      </button>
+      </ThemedButton>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse border border-gray-200 shadow-md">
-          <thead className="bg-blue-500 text-white">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-lg">
+          <thead className="bg-gray-100">
             <tr>
               <th className="py-3 px-6 text-left font-semibold border-b">
                 Producto

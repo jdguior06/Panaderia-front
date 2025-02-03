@@ -29,7 +29,7 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
     const updatedMetodosPago = [...metodosPago];
     updatedMetodosPago[index].monto = value;
     setMetodosPago(updatedMetodosPago);
-    console.log("Actualización de montos:", updatedMetodosPago);
+    // console.log("Actualización de montos:", updatedMetodosPago);
   };
 
   const handleMontoBlur = (index) => {
@@ -97,7 +97,7 @@ const MetodoPagoModal = ({ open, onClose, total, onSave }) => {
     }
 
     setError("");
-    console.log("Enviando métodos de pago:", metodosPago);
+    // console.log("Enviando métodos de pago:", metodosPago);
     onSave(
       metodosPago.map((metodo) => ({
         ...metodo,

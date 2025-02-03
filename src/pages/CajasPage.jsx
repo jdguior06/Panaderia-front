@@ -74,7 +74,7 @@ const CajasPage = () => {
 
       if (sesion) {
         if (mismaSesion) {
-          alert(
+          showNotification.info(
             "Sesión abierta encontrada. Redirigiendo a la sesión actual..."
           );
           navigate(`/cajas/${caja.id}/sesion/${sesion.id}`, {
@@ -90,7 +90,7 @@ const CajasPage = () => {
         setOpenAperturaModal(true);
       }
     } catch (error) {
-      alert(error.message || "Error al verificar la sesión.");
+      showNotification.error(error.message || "Error al verificar la sesión.");
     }
   };
 

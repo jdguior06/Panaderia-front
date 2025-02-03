@@ -1,6 +1,7 @@
 // src/components/BackupUploadForm.jsx
 import React, { useState } from "react";
 import { uploadBackup } from "../services/backupServices";
+import { showNotification } from "../utils/toast";
 
 const BackupUploadForm = () => {
   const [file, setFile] = useState(null);
@@ -13,7 +14,7 @@ const BackupUploadForm = () => {
     if (file) {
       await uploadBackup(file);
     } else {
-      alert("Por favor selecciona un archivo de backup.");
+      showNotification.info("Por favor selecciona un archivo de backup.");
     }
   };
 

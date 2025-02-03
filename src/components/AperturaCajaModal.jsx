@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { aperturaCaja } from "../reducers/cajaSesionSlice";
+import { showNotification } from "../utils/toast";
 
 const AperturaCajaModal = ({ open, onClose, selectedCaja, idSucursal }) => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const AperturaCajaModal = ({ open, onClose, selectedCaja, idSucursal }) => {
         .then((action) => {
           if (aperturaCaja.fulfilled.match(action)) {
             if (action.payload.conflict) {
-              alert(
+              showNotification.info(
                 "Ya existe una sesión abierta para esta caja. Redirigiendo a la sesión actual..."
               );
               navigate(
@@ -45,7 +46,7 @@ const AperturaCajaModal = ({ open, onClose, selectedCaja, idSucursal }) => {
           }
         })
         .catch((error) => {
-          alert("Error al abrir la caja: " + error.message);
+          showNotification.error("Error al abrir la caja: " + error.message);
         });
     }
   };

@@ -16,6 +16,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import ThemedButton from "../components/ThemedButton";
+import PermissionWrapper from "../components/PermissionWrapper";
 
 const CategoriasPage = () => {
   const dispatch = useDispatch();
@@ -116,22 +117,25 @@ const CategoriasPage = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
-          Crear Categoría
-        </ThemedButton>
 
-        <div className="flex items-center ml-4">
-          <input
-            type="checkbox"
-            id="showInactive"
-            className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-            checked={showInactive}
-            onChange={() => setShowInactive(!showInactive)}
-          />
-          <label htmlFor="showInactive" style={{ color: theme.textColor }}>
-            Mostrar inactivos
-          </label>
-        </div>
+        <PermissionWrapper permission="PERMISO_ADMINISTRAR_CATEGORIAS">
+          <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
+            Crear Categoría
+          </ThemedButton>
+
+          <div className="flex items-center ml-4">
+            <input
+              type="checkbox"
+              id="showInactive"
+              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+              checked={showInactive}
+              onChange={() => setShowInactive(!showInactive)}
+            />
+            <label htmlFor="showInactive" style={{ color: theme.textColor }}>
+              Mostrar inactivos
+            </label>
+          </div>
+        </PermissionWrapper>
       </div>
 
       <div className="overflow-x-auto">
@@ -140,7 +144,9 @@ const CategoriasPage = () => {
             <tr>
               <th className="py-3 px-4 text-left font-semibold">Nombre</th>
               <th className="py-3 px-4 text-left font-semibold">Descripción</th>
-              <th className="py-3 px-4 text-left font-semibold">Acciones</th>
+              <PermissionWrapper permission="PERMISO_ADMINISTRAR_CATEGORIAS">
+                <th className="py-3 px-4 text-left font-semibold">Acciones</th>
+              </PermissionWrapper>
             </tr>
           </thead>
           <tbody>
@@ -149,32 +155,36 @@ const CategoriasPage = () => {
                 key={categoria.id}
                 className={`${categoria.activo ? " " : "bg-gray-200"} `}
               >
-                <td className="border-b border-gray-200 py-3 px-4">{categoria.nombre}</td>
+                <td className="border-b border-gray-200 py-3 px-4">
+                  {categoria.nombre}
+                </td>
                 <td className="border-b border-gray-200 py-3 px-4">
                   {categoria.descripcion || "Sin descripción"}
                 </td>
-                <td className="flex space-x-2 border-b border-gray-200 py-3 px-4">
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
-                    onClick={() => handleOpenModal(categoria)}
-                  >
-                    <PencilSquareIcon className="h-4 w-4" />
-                  </button>
-                  <button
-                    className={`${
-                      categoria.activo 
-                        ? "bg-red-500 hover:bg-red-600" 
-                        : "bg-green-500 hover:bg-green-600"
-                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                    onClick={() => handleOpenDeleteModal(categoria)}
-                  >
-                    {categoria.activo ? (
-                      <TrashIcon className="h-4 w-4" />
-                    ) : (
-                      <ArrowPathIcon className="h-4 w-4" />
-                    )}
-                  </button>
-                </td>
+                <PermissionWrapper permission="PERMISO_ADMINISTRAR_CATEGORIAS">
+                  <td className="flex space-x-2 border-b border-gray-200 py-3 px-4">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
+                      onClick={() => handleOpenModal(categoria)}
+                    >
+                      <PencilSquareIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      className={`${
+                        categoria.activo
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-green-500 hover:bg-green-600"
+                      } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                      onClick={() => handleOpenDeleteModal(categoria)}
+                    >
+                      {categoria.activo ? (
+                        <TrashIcon className="h-4 w-4" />
+                      ) : (
+                        <ArrowPathIcon className="h-4 w-4" />
+                      )}
+                    </button>
+                  </td>
+                </PermissionWrapper>
               </tr>
             ))}
           </tbody>

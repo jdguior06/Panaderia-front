@@ -50,6 +50,7 @@ function App() {
       if (authData?.token) {
         try {
           const response = await api.get("/auth/me");
+          console.log(response.data)
           if (!response.data) {
             dispatch(clearAuth());
           }
@@ -92,6 +93,7 @@ function App() {
           {/* Rutas donde se muestra Navbar1 */}
           <Route element={<NavbarLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/planes" element={<PlanPage />} />
             <Route path="/registro" element={<Registro />} />

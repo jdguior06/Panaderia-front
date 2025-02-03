@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { showNotification } from "../utils/toast";
 
 const NotaEntradaForm = ({ almacenId, proveedores, productos, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const NotaEntradaForm = ({ almacenId, proveedores, productos, onSubmit, onClose 
     e.preventDefault();
 
     if (!formData.proveedor) {
-      alert("Debe seleccionar un proveedor.");
+      showNotification.warning("Debe seleccionar un proveedor.");
       return;
     }
 
@@ -82,7 +83,7 @@ const NotaEntradaForm = ({ almacenId, proveedores, productos, onSubmit, onClose 
         (detalle) => !detalle.productoId || detalle.cantidad <= 0
       )
     ) {
-      alert("Todos los productos deben tener una cantidad válida.");
+      showNotification.warning("Todos los productos deben tener una cantidad válida.");
       return;
     }
 

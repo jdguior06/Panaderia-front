@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { obtenerVentas } from "../reducers/ventaSlice";
 import DetallesVentaModal from "../components/DetallesVentaModal";
+import ThemedButton from "../components/ThemedButton";
 
 const VentasPage = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,6 @@ const VentasPage = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  // Filtrar ventas por búsqueda de texto y rango de fechas
   const filteredVentas = ventas.filter((venta) => {
     const matchesSearchTerm =
       venta.cliente?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -45,7 +45,7 @@ const VentasPage = () => {
   );
 
   const handleRowClick = (venta) => {
-    setSelectedVenta(venta); // Establece la venta seleccionada para mostrar los detalles
+    setSelectedVenta(venta); 
   };
 
   const handlePageChange = (pageNumber) => {
@@ -113,12 +113,11 @@ const VentasPage = () => {
                 Bs. {venta.total.toFixed(2)}
               </td>
               <td className="border border-gray-300 px-4 py-2">
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                <ThemedButton variant="primary"
                   onClick={() => handleRowClick(venta)}
                 >
                   Ver Detalles
-                </button>
+                </ThemedButton>
               </td>
             </tr>
           ))}
@@ -134,7 +133,7 @@ const VentasPage = () => {
             id="itemsPerPage"
             value={itemsPerPage}
             onChange={(e) => setItemsPerPage(Number(e.target.value))}
-            className="border px-2 py-1 rounded"
+            className="border px-2 py-1 rounded w-20"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>

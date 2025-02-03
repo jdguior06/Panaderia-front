@@ -8,7 +8,7 @@ import {
   clearCart,
 } from "../reducers/cartSlice";
 import { fetchProductosConsolidados } from "../reducers/productoSlice";
-import { addCliente, fetchClientesActivos } from "../reducers/clienteSlice";
+import { addCliente, fetchClientes, fetchClientesActivos } from "../reducers/clienteSlice";
 import { cierreCaja } from "../reducers/cajaSesionSlice";
 import { realizarVenta } from "../reducers/ventaSlice";
 import { useTheme } from "../context/ThemeContext";
@@ -16,7 +16,6 @@ import ClienteModal from "../components/ClienteModal";
 import MetodoPagoModal from "../components/MetodoPagoModal";
 import InvoiceModal from "../components/InvoiceModal";
 import CierreCajaModal from "../components/CierreCajaModal";
-import { toast } from "react-toastify";
 import { showNotification } from "../utils/toast";
 
 const PosPage = () => {
@@ -55,7 +54,7 @@ const PosPage = () => {
       dispatch(fetchProductosConsolidados(idSucursal));
       dispatch(fetchClientesActivos());
     } else {
-      alert("ID de sucursal no encontrado. Redirigiendo al inicio.");
+      showNotification.error("ID de sucursal no encontrado. Redirigiendo al inicio.");
       navigate("/");
     }
   }, [dispatch, idSucursal, navigate]);
@@ -86,11 +85,12 @@ const PosPage = () => {
 
   const handlePagar = () => {
     if (cartItems.length === 0) {
+      // alert("El carrito está vacío. Agrega productos antes de pagar.");
       showNotification.error("El carrito está vacío. Agrega productos antes de pagar.");
       return;
     }
     if (selectedCliente && !selectedCliente.id) {
-      alert(
+      showNotification.error(
         "Error: El cliente seleccionado no tiene un ID válido. Por favor, seleccione el cliente nuevamente."
       );
       return;
@@ -102,17 +102,17 @@ const PosPage = () => {
   const handleConfirmarVenta = async (metodosPago) => {
     try {
       if (cartItems.length === 0) {
-        toast.error("No hay productos en el carrito");
+        showNotification.error("No hay productos en el carrito");
         return;
       }
 
       if (!selectedCliente) {
-        toast.error("Por favor seleccione un cliente");
+        showNotification.error("Por favor seleccione un cliente");
         return;
       }
 
       if (!metodosPago || metodosPago.length === 0) {
-        toast.error("Debe especificar al menos un método de pago");
+        showNotification.error("Debe especificar al menos un método de pago");
         return;
       }
 
@@ -122,7 +122,7 @@ const PosPage = () => {
       );
 
       if (sumaPagos < total) {
-        toast.error(
+        showNotification.error(
           `El monto total de pago (${sumaPagos.toFixed(
             2
           )}) es menor al total de la venta (${total.toFixed(2)})`
@@ -133,7 +133,7 @@ const PosPage = () => {
       for (const item of cartItems) {
         const product = products.find((p) => p.producto.id === item.id);
         if (!product || product.totalStock < item.cantidad) {
-          toast.error(`Stock insuficiente para el producto: ${item.nombre}`);
+          showNotification.error(`Stock insuficiente para el producto: ${item.nombre}`);
           return;
         }
       }
@@ -151,13 +151,13 @@ const PosPage = () => {
         cliente: selectedCliente,
       };
 
-      console.log(
-        "Datos enviados a la API:",
-        JSON.stringify(ventaData, null, 2)
-      );
+      // console.log(
+      //   "Datos enviados a la API:",
+      //   JSON.stringify(ventaData, null, 2)
+      // );
 
       await dispatch(realizarVenta(ventaData)).unwrap();
-      toast.success("Venta realizada con éxito");
+      showNotification.success("Venta realizada con éxito");
       setVentaData(ventaData);
       setShowInvoice(true);
       dispatch(clearCart());
@@ -165,7 +165,7 @@ const PosPage = () => {
       dispatch(fetchClientesActivos());
       resetStateAfterSale();
     } catch (error) {
-      toast.error(error.message || "Error al realizar la venta");
+      showNotification.error(error.message || "Error al realizar la venta");
       console.error("Error completo:", error);
     }
   };
@@ -173,11 +173,11 @@ const PosPage = () => {
   const handleCierreCaja = async () => {
     try {
       const response = await dispatch(cierreCaja(sesionId)).unwrap();
-      alert("Caja cerrada con éxito");
+      showNotification.info("Caja cerrada con éxito");
       setShowCierreModal(true);
       setSesionData(response);
     } catch (error) {
-      alert(`Error al cerrar la caja: ${error.message}`);
+      showNotification.error(`Error al cerrar la caja: ${error.message}`);
     }
   };
 
@@ -204,7 +204,7 @@ const PosPage = () => {
 
   useEffect(() => {
     if (selectedCliente) {
-      console.log("Cliente seleccionado:", selectedCliente);
+      // console.log("Cliente seleccionado:", selectedCliente);
       // Verificar que el cliente tenga un ID válido
       if (!selectedCliente.id) {
         console.error("Cliente seleccionado sin ID válido");
@@ -239,7 +239,7 @@ const PosPage = () => {
           onClose={() => setIsMetodoPagoModalOpen(false)}
           total={total}
           onSave={(selectedMetodosPago) => {
-            console.log("Métodos de pago recibidos:", selectedMetodosPago);
+            // console.log("Métodos de pago recibidos:", selectedMetodosPago);
             setIsMetodoPagoModalOpen(false); // Cierra el modal
             handleConfirmarVenta(selectedMetodosPago); // Indica que la venta está pendiente
           }}
@@ -256,7 +256,7 @@ const PosPage = () => {
           open={showCierreModal}
           onClose={() => {
             setShowCierreModal(false);
-            navigate("/dashboard");
+            navigate(`/sucursales/${idSucursal}/panel/cajas`);
           }}
           sesionData={sesionData}
         />

@@ -1,5 +1,4 @@
-// src/components/Sidebar.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   XMarkIcon,
   HomeIcon,
@@ -17,8 +16,8 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { clearAuth, selectHasPermission } from "../reducers/authSlice";
+import { useDispatch } from "react-redux";
+import { clearAuth } from "../reducers/authSlice";
 import PermissionWrapper from "./PermissionWrapper";
 import { useTheme } from "../context/ThemeContext";
 
@@ -31,14 +30,15 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
   const [isAlmacenesOpen, setIsAlmacenesOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     dispatch(clearAuth());
     navigate("/");
   };
 
-  // Verifica si selectedSucursal no es null o undefined antes de intentar acceder a su id
-  const isInsideAlmacen = selectedSucursal &&
-    location.pathname.includes(`/sucursales/${selectedSucursal.id}/panel/almacenes`) &&
+  const isInsideAlmacen =
+    selectedSucursal &&
+    location.pathname.includes(
+      `/sucursales/${selectedSucursal.id}/panel/almacenes`
+    ) &&
     location.pathname.split("/").length >= 6;
 
   return (
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
       className={`flex flex-col text-white w-64 py-6 px-3 absolute inset-y-0 left-0 transform ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } lg:relative lg:translate-x-0 transition duration-300 ease-in-out shadow-lg border-r border-gray-700`}
-      style={{ backgroundColor: theme.primaryColor }} 
+      style={{ backgroundColor: theme.primaryColor }}
     >
       <button
         onClick={toggleSidebar}
@@ -65,14 +65,16 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
             >
               <HomeIcon className="w-5 h-5 mr-2" /> Todas las Sucursales
             </Link>
-            <Link
-              to="/ventas"
-              className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                location.pathname === "/ventas" ? "bg-red-700" : ""
-              }`}
-            >
-              <ShoppingCartIcon className="w-5 h-5 mr-2" /> Ventas
-            </Link>
+            {/* <PermissionWrapper permission={"PERMISO_VER_REPORTE_VENTAS"}> */}
+              <Link
+                to="/ventas"
+                className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
+                  location.pathname === "/ventas" ? "bg-red-700" : ""
+                }`}
+              >
+                <ShoppingCartIcon className="w-5 h-5 mr-2" /> Ventas
+              </Link>
+            {/* </PermissionWrapper> */}
           </>
         ) : (
           <>
@@ -81,53 +83,52 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
                 {selectedSucursal.nombre}
               </h2>
             </div>
-            {/* Opciones de sucursal seleccionada */}
-            <Link
-              to={`/sucursales/${selectedSucursal.id}/panel/almacenes`}
-              className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                location.pathname.includes("/almacenes") ? "bg-red-700" : ""
-              }`}
-            >
-              <CubeIcon className="w-5 h-5 mr-2" /> Almacenes
-            </Link>
-            {/* Opción para Almacenes */}
+
             <div>
-              <button
-                className="w-full flex items-center text-left py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600"
-                onClick={() => setIsAlmacenesOpen(!isAlmacenesOpen)}
-              >
-                <CubeIcon className="w-5 h-5 mr-2" /> Almacenes
-                {isAlmacenesOpen ? (
-                  <ChevronUpIcon className="w-5 h-5 ml-auto" />
-                ) : (
-                  <ChevronDownIcon className="w-5 h-5 ml-auto" />
-                )}
-              </button>
-              {isAlmacenesOpen && (
-                <div className="pl-6 space-y-1">
-                  <Link
-                    to={`/sucursales/${selectedSucursal.id}/panel/almacenes`}
-                    className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                      location.pathname.includes("/panel/almacenes") &&
-                      !location.pathname.includes("/notas-entrada")
-                        ? "bg-red-700"
-                        : ""
-                    }`}
-                  >
-                    Gestionar Almacenes
-                  </Link>
-                  {isInsideAlmacen && (
+              <PermissionWrapper permission="PERMISO_VER_ALMACENES">
+                <button
+                  className="w-full flex items-center text-left py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600"
+                  onClick={() => setIsAlmacenesOpen(!isAlmacenesOpen)}
+                >
+                  <CubeIcon className="w-5 h-5 mr-2" /> Almacenes
+                  {isAlmacenesOpen ? (
+                    <ChevronUpIcon className="w-5 h-5 ml-auto" />
+                  ) : (
+                    <ChevronDownIcon className="w-5 h-5 ml-auto" />
+                  )}
+                </button>
+                {isAlmacenesOpen && (
+                  <div className="pl-6 space-y-1">
                     <Link
-                      to={`/sucursales/${selectedSucursal.id}/panel/almacenes/${location.pathname.split("/")[5]}/notas-entrada`}
+                      to={`/sucursales/${selectedSucursal.id}/panel/almacenes`}
                       className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                        location.pathname.includes("/notas-entrada") ? "bg-red-700" : ""
+                        location.pathname.includes("/panel/almacenes") &&
+                        !location.pathname.includes("/notas-entrada")
+                          ? "bg-red-700"
+                          : ""
                       }`}
                     >
-                      Notas de compras
+                      Gestionar Almacenes
                     </Link>
-                  )}
-                </div>
-              )}
+                    {isInsideAlmacen && (
+                      <Link
+                        to={`/sucursales/${
+                          selectedSucursal.id
+                        }/panel/almacenes/${
+                          location.pathname.split("/")[5]
+                        }/notas-entrada`}
+                        className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
+                          location.pathname.includes("/notas-entrada")
+                            ? "bg-red-700"
+                            : ""
+                        }`}
+                      >
+                        Notas de compras
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </PermissionWrapper>
             </div>
 
             <Link
@@ -138,14 +139,14 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
             >
               <TruckIcon className="w-5 h-5 mr-2" /> Cajas
             </Link>
-            <Link
+            {/* <Link
               to={`/reportes`}
               className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
                 location.pathname.includes("/reportes") ? "bg-red-700" : ""
               }`}
             >
               <ChartBarIcon className="w-5 h-5 mr-2" /> Reportes
-            </Link>
+            </Link> */}
           </>
         )}
         {/* Resto de las opciones de navegación */}
@@ -160,49 +161,56 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
           </Link>
         </PermissionWrapper>
 
-        {/* Desplegable de Productos */}
         <div>
-          <button
-            className="w-full flex items-center text-left py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600"
-            onClick={() => setIsProductsOpen(!isProductsOpen)}
-          >
-            <CubeIcon className="w-5 h-5 mr-2" /> Productos
-            {isProductsOpen ? (
-              <ChevronUpIcon className="w-5 h-5 ml-auto" />
-            ) : (
-              <ChevronDownIcon className="w-5 h-5 ml-auto" />
+          <PermissionWrapper permission={"PERMISO_VER_PRODUCTOS"}>
+            <button
+              className="w-full flex items-center text-left py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600"
+              onClick={() => setIsProductsOpen(!isProductsOpen)}
+            >
+              <CubeIcon className="w-5 h-5 mr-2" /> Productos
+              {isProductsOpen ? (
+                <ChevronUpIcon className="w-5 h-5 ml-auto" />
+              ) : (
+                <ChevronDownIcon className="w-5 h-5 ml-auto" />
+              )}
+            </button>
+            {isProductsOpen && (
+              <div className="pl-6 space-y-1">
+                <Link
+                  to="/productos"
+                  className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
+                    location.pathname === "/productos" ? "bg-red-700" : ""
+                  }`}
+                >
+                  Productos
+                </Link>
+
+                <PermissionWrapper permission={"PERMISO_VER_CATEGORIAS"}>
+                  <Link
+                    to="/categorias"
+                    className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
+                      location.pathname === "/categorias" ? "bg-red-700" : ""
+                    }`}
+                  >
+                    Categorías
+                  </Link>
+                </PermissionWrapper>
+              </div>
             )}
-          </button>
-          {isProductsOpen && (
-            <div className="pl-6 space-y-1">
-              <Link
-                to="/productos"
-                className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                  location.pathname === "/productos" ? "bg-red-700" : ""
-                }`}
-              >
-                Productos
-              </Link>
-              <Link
-                to="/categorias"
-                className={`block py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                  location.pathname === "/categorias" ? "bg-red-700" : ""
-                }`}
-              >
-                Categorías
-              </Link>
-            </div>
-          )}
+          </PermissionWrapper>
         </div>
+
         {/* Más opciones de navegación */}
-        <Link
-          to="/clientes"
-          className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-            location.pathname.includes("/clientes") ? "bg-red-700" : ""
-          }`}
-        >
-          <UserIcon className="w-5 h-5 mr-2" /> Clientes
-        </Link>
+        <PermissionWrapper permission={"PERMISO_VER_CLIENTES"}>
+          <Link
+            to="/clientes"
+            className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
+              location.pathname.includes("/clientes") ? "bg-red-700" : ""
+            }`}
+          >
+            <UserIcon className="w-5 h-5 mr-2" /> Clientes
+          </Link>
+        </PermissionWrapper>
 
         <PermissionWrapper permission="PERMISO_GESTIONAR_PROVEEDORES">
           <Link
@@ -235,8 +243,7 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
             <ShieldCheckIcon className="w-5 h-5 mr-2" /> Permisos
           </Link>
         </PermissionWrapper>
-        
-        {/* Sección de Configuración y Backup */}
+
         <Link
           to="/settings"
           className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
@@ -254,10 +261,8 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
         >
           <CogIcon className="w-5 h-5 mr-2" /> Temas
         </Link>
-        {/* Añadimos el botón de descarga de backup */}
       </nav>
 
-      {/* Botón para cerrar sesión al final */}
       <button
         onClick={handleLogout}
         className="flex items-center w-full py-2 px-3 mt-auto rounded-lg transition duration-200 hover:bg-red-600"

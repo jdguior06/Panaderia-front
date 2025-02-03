@@ -7,7 +7,7 @@ const MainLayout = () => {
     <>
       <Header />
       <main className="flex-1 p-4 bg-gray-100 overflow-y-auto">
-          <Outlet /> {/* Aquí se renderizan las páginas dentro del layout */}
+          <Outlet /> 
         </main>
       <Footer />
     </>

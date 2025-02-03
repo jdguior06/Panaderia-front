@@ -199,14 +199,12 @@ const NotaEntradaPage = () => {
         </div>
       </div>
 
-      {/* Total */}
       <div className="mt-6 text-right">
         <p className="text-xl font-bold">
           Total de Notas Filtradas: Bs. {totalNotasFiltradas.toFixed(2)}
         </p>
       </div>
 
-      {/* Modales */}
       {isModalOpen && (
         <NotaEntradaForm
           almacenId={idAlmacen}

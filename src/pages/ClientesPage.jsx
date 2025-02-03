@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClientes, addCliente, updateCliente, deleteCliente, activarCliente } from "../reducers/clienteSlice";
+import {
+  fetchClientes,
+  addCliente,
+  updateCliente,
+  deleteCliente,
+  activarCliente,
+} from "../reducers/clienteSlice";
 import ClienteModal from "../components/ClienteModal";
 import ClienteDeleteModal from "../components/ClienteDeleteModal";
 import { useTheme } from "../context/ThemeContext"; // Importa useTheme para usar los colores del tema
 import ThemedButton from "../components/ThemedButton";
-import { ArrowPathIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import PermissionWrapper from "../components/PermissionWrapper";
 
 const ClientesPage = () => {
   const dispatch = useDispatch();
@@ -57,21 +68,28 @@ const ClientesPage = () => {
     dispatch(fetchClientes());
   };
 
-  const filteredClientes = clientes.filter(cliente =>
-    (showInactive || cliente.activo) &&
-    (`${cliente.nombre} ${cliente.apellido}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.nit.toString().includes(searchTerm))
+  const filteredClientes = clientes.filter(
+    (cliente) =>
+      (showInactive || cliente.activo) &&
+      (`${cliente.nombre} ${cliente.apellido}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+        cliente.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cliente.nit.toString().includes(searchTerm))
   );
 
   const indexOfLastClient = currentPage * clientsPerPage;
   const indexOfFirstClient = indexOfLastClient - clientsPerPage;
-  const currentClientes = filteredClientes.slice(indexOfFirstClient, indexOfLastClient);
+  const currentClientes = filteredClientes.slice(
+    indexOfFirstClient,
+    indexOfLastClient
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) return <div className="text-center text-xl">Cargando...</div>;
-  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
+  if (error)
+    return <div className="text-center text-red-500">Error: {error}</div>;
 
   return (
     <>
@@ -92,8 +110,19 @@ const ClientesPage = () => {
         onDelete={handleDelete}
       />
 
-      <div className="clientes-page container mx-auto p-6" style={{ color: theme.textColor, backgroundColor: theme.backgroundColor }}>
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: theme.textColor }}>Gestión de Clientes</h2>
+      <div
+        className="clientes-page container mx-auto p-6"
+        style={{
+          color: theme.textColor,
+          backgroundColor: theme.backgroundColor,
+        }}
+      >
+        <h2
+          className="text-3xl font-bold mb-6 text-center"
+          style={{ color: theme.textColor }}
+        >
+          Gestión de Clientes
+        </h2>
 
         {/* Control para búsqueda y checkbox de inactivos */}
         <div className="flex justify-between items-center mb-6">
@@ -105,22 +134,26 @@ const ClientesPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          <ThemedButton variant="primary"
-            onClick={() => handleOpenModal()}
-          >
-            Crear Cliente
-          </ThemedButton>
+          <PermissionWrapper permission="PERMISO_CREAR_CLIENTES">
+            <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
+              Crear Cliente
+            </ThemedButton>
+          </PermissionWrapper>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="showInactive"
-              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-              checked={showInactive}
-              onChange={() => setShowInactive(!showInactive)}
-            />
-            <label htmlFor="showInactive" style={{ color: theme.textColor }}>Mostrar inactivos</label>
-          </div>
+          <PermissionWrapper permission="PERMISO_CREAR_CLIENTES">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="showInactive"
+                className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+                checked={showInactive}
+                onChange={() => setShowInactive(!showInactive)}
+              />
+              <label htmlFor="showInactive" style={{ color: theme.textColor }}>
+                Mostrar inactivos
+              </label>
+            </div>
+          </PermissionWrapper>
         </div>
 
         {/* Tabla de clientes */}
@@ -132,41 +165,52 @@ const ClientesPage = () => {
                 <th className="border-b py-3 px-4 text-left">Nombre</th>
                 <th className="border-b py-3 px-4 text-left">Email</th>
                 <th className="border-b py-3 px-4 text-left">NIT</th>
-                <th className="border-b py-3 px-4 text-left">Acciones</th>
+                <PermissionWrapper permission="PERMISO_CREAR_CLIENTES">
+                  <th className="border-b py-3 px-4 text-left">Acciones</th>
+                </PermissionWrapper>
               </tr>
             </thead>
             <tbody>
               {currentClientes.map((cliente) => (
                 <tr
                   key={cliente.id}
-                  className={`${cliente.activo ? '' : 'bg-gray-200'}`}
+                  className={`${cliente.activo ? "" : "bg-gray-200"}`}
                   style={{ color: theme.textColor }}
                 >
                   <td className="border-b py-3 px-4">{cliente.id}</td>
                   <td className="border-b py-3 px-4">{`${cliente.nombre} ${cliente.apellido}`}</td>
-                  <td className="border-b py-3 px-4">{cliente.email || 'No disponible'}</td>
-                  <td className="border-b py-3 px-4">{cliente.nit || 'No disponible'}</td>
+                  <td className="border-b py-3 px-4">
+                    {cliente.email || "No disponible"}
+                  </td>
+                  <td className="border-b py-3 px-4">
+                    {cliente.nit || "No disponible"}
+                  </td>
                   <td className="py-3 px-4 flex space-x-2">
-                    <button
-                      className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
-                      onClick={() => handleOpenModal(cliente)}
-                    >
-                      <PencilSquareIcon className="h-4 w-4" />
-                    </button>
-                    <button
-                      className={`${
-                        cliente.activo 
-                          ? "bg-red-500 hover:bg-red-600" 
-                          : "bg-green-500 hover:bg-green-600"
-                      } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                      onClick={() => handleOpenDeleteModal(cliente)}
-                    >
-                      {cliente.activo ? (
-                      <TrashIcon className="h-4 w-4" />
-                    ) : (
-                      <ArrowPathIcon className="h-4 w-4" />
-                    )}
-                    </button>
+                    <PermissionWrapper permission="PERMISO_EDITAR_CLIENTES">
+                      <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center w-8 h-8 rounded-full shadow-sm"
+                        onClick={() => handleOpenModal(cliente)}
+                      >
+                        <PencilSquareIcon className="h-4 w-4" />
+                      </button>
+                    </PermissionWrapper>
+
+                    <PermissionWrapper permission="PERMISO_ELIMINAR_CLIENTES">
+                      <button
+                        className={`${
+                          cliente.activo
+                            ? "bg-red-500 hover:bg-red-600"
+                            : "bg-green-500 hover:bg-green-600"
+                        } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                        onClick={() => handleOpenDeleteModal(cliente)}
+                      >
+                        {cliente.activo ? (
+                          <TrashIcon className="h-4 w-4" />
+                        ) : (
+                          <ArrowPathIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    </PermissionWrapper>
                   </td>
                 </tr>
               ))}
@@ -177,19 +221,22 @@ const ClientesPage = () => {
         {/* Paginación */}
         <div className="flex justify-center mt-8">
           <nav className="inline-flex space-x-2">
-            {Array.from({ length: Math.ceil(filteredClientes.length / clientsPerPage) }, (_, i) => (
-              <button
-                key={i + 1}
-                className={`px-4 py-2 rounded-lg border ${
-                  currentPage === i + 1
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-200"
-                } border-gray-300 shadow-sm transition`}
-                onClick={() => paginate(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
+            {Array.from(
+              { length: Math.ceil(filteredClientes.length / clientsPerPage) },
+              (_, i) => (
+                <button
+                  key={i + 1}
+                  className={`px-4 py-2 rounded-lg border ${
+                    currentPage === i + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-gray-700 hover:bg-gray-200"
+                  } border-gray-300 shadow-sm transition`}
+                  onClick={() => paginate(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
           </nav>
         </div>
       </div>

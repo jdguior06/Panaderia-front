@@ -34,7 +34,7 @@ const ReportePage = () => {
   }, [dispatch, almacenId]);
 
   useEffect(() => {
-    console.log("Productos en Almacén cargados:", productosAlmacen);
+    // console.log("Productos en Almacén cargados:", productosAlmacen);
   }, [productosAlmacen]);
 
   const generatePDF = () => {
@@ -133,7 +133,7 @@ const ReportePage = () => {
           startY: 40
         });
       } else {
-        console.log("Producto específico no encontrado en el almacén especificado.");
+        // console.log("Producto específico no encontrado en el almacén especificado.");
       }
     }
 
