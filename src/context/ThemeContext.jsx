@@ -24,7 +24,7 @@ export const ThemeProvider = ({ children }) => {
         },
         document: {
             name: "document",
-            primaryColor: '#4CAF50',
+            primaryColor: '#18154D',
             backgroundColor: '#F3F4F6',
             textColor: '#000000',
             borderRadius: 4,
