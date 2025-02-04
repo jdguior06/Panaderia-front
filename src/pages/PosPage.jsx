@@ -8,7 +8,11 @@ import {
   clearCart,
 } from "../reducers/cartSlice";
 import { fetchProductosConsolidados } from "../reducers/productoSlice";
-import { addCliente, fetchClientes, fetchClientesActivos } from "../reducers/clienteSlice";
+import {
+  addCliente,
+  fetchClientes,
+  fetchClientesActivos,
+} from "../reducers/clienteSlice";
 import { cierreCaja } from "../reducers/cajaSesionSlice";
 import { realizarVenta } from "../reducers/ventaSlice";
 import { useTheme } from "../context/ThemeContext";
@@ -54,7 +58,9 @@ const PosPage = () => {
       dispatch(fetchProductosConsolidados(idSucursal));
       dispatch(fetchClientesActivos());
     } else {
-      showNotification.error("ID de sucursal no encontrado. Redirigiendo al inicio.");
+      showNotification.error(
+        "ID de sucursal no encontrado. Redirigiendo al inicio."
+      );
       navigate("/");
     }
   }, [dispatch, idSucursal, navigate]);
@@ -86,7 +92,9 @@ const PosPage = () => {
   const handlePagar = () => {
     if (cartItems.length === 0) {
       // alert("El carrito está vacío. Agrega productos antes de pagar.");
-      showNotification.error("El carrito está vacío. Agrega productos antes de pagar.");
+      showNotification.error(
+        "El carrito está vacío. Agrega productos antes de pagar."
+      );
       return;
     }
     // if (selectedCliente && !selectedCliente.id) {
@@ -133,7 +141,9 @@ const PosPage = () => {
       for (const item of cartItems) {
         const product = products.find((p) => p.producto.id === item.id);
         if (!product || product.totalStock < item.cantidad) {
-          showNotification.error(`Stock insuficiente para el producto: ${item.nombre}`);
+          showNotification.error(
+            `Stock insuficiente para el producto: ${item.nombre}`
+          );
           return;
         }
       }
@@ -182,7 +192,7 @@ const PosPage = () => {
   };
 
   const handlePrintInvoice = () => {
-    window.print(); 
+    window.print();
   };
 
   const handleCloseInvoice = () => {
@@ -390,9 +400,21 @@ const PosPage = () => {
                         />
                       </svg>
                     </button>
-                    <span className="text-gray-800 font-medium">
+                    <input
+                      type="number"
+                      value={item.cantidad}
+                      min="1"
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          item.id,
+                          Math.max(1, parseInt(e.target.value) || 1)
+                        )
+                      }
+                      className="w-16 text-center border rounded-md text-gray-800 font-medium"
+                    />
+                    {/* <span className="text-gray-800 font-medium">
                       {item.cantidad}
-                    </span>
+                    </span> */}
                     <button
                       onClick={() =>
                         handleQuantityChange(item.id, item.cantidad + 1)

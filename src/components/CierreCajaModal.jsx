@@ -20,6 +20,13 @@ const CierreCajaModal = ({ open, onClose, sesionData }) => {
           </div>
 
           <div className="flex justify-between">
+            <span>Fecha/Hora Cierre:</span>
+            <span>
+              {new Date(sesionData.fechaHoraCierre).toLocaleString()}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
             <span>Saldo Inicial:</span>
             <span>Bs. {sesionData.saldoInicial.toFixed(2)}</span>
           </div>
