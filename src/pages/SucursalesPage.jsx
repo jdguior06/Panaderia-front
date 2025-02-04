@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import ThemedButton from "../components/ThemedButton";
+import PermissionWrapper from "../components/PermissionWrapper";
 
 const SucursalesPage = ({ setSelectedSucursal }) => {
   const dispatch = useDispatch();
@@ -115,22 +116,25 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
-          <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
-            Crear Sucursal
-          </ThemedButton>
+          <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+            <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
+              Crear Sucursal
+            </ThemedButton>
+          </PermissionWrapper>
 
           <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="showInactive"
-              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-              checked={showInactive}
-              onChange={() => setShowInactive(!showInactive)}
-            />
-            <label htmlFor="showInactive" style={{ color: theme.textColor }}>
-              Mostrar inactivas
-            </label>
+            <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+              <input
+                type="checkbox"
+                id="showInactive"
+                className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+                checked={showInactive}
+                onChange={() => setShowInactive(!showInactive)}
+              />
+              <label htmlFor="showInactive" style={{ color: theme.textColor }}>
+                Mostrar inactivas
+              </label>
+            </PermissionWrapper>
           </div>
         </div>
 
@@ -164,27 +168,29 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
               </p>
 
               <div className="flex justify-between items-center mt-4">
-                <button
-                  className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
-                  onClick={() => handleOpenModal(sucursal)}
-                >
-                  <PencilSquareIcon className="h-5 w-5 mr-1" />
-                </button>
+                <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+                  <button
+                    className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
+                    onClick={() => handleOpenModal(sucursal)}
+                  >
+                    <PencilSquareIcon className="h-5 w-5 mr-1" />
+                  </button>
 
-                <button
-                  className={`${
-                    sucursal.activo
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-green-500 hover:bg-green-600"
-                  } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                  onClick={() => handleDelete(sucursal.id)}
-                >
-                  {sucursal.activo ? (
-                    <TrashIcon className="h-5 w-5 mr-1" />
-                  ) : (
-                    <ArrowPathIcon className="h-5 w-5 mr-1" />
-                  )}
-                </button>
+                  <button
+                    className={`${
+                      sucursal.activo
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                    onClick={() => handleDelete(sucursal.id)}
+                  >
+                    {sucursal.activo ? (
+                      <TrashIcon className="h-5 w-5 mr-1" />
+                    ) : (
+                      <ArrowPathIcon className="h-5 w-5 mr-1" />
+                    )}
+                  </button>
+                </PermissionWrapper>
 
                 <button
                   className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"

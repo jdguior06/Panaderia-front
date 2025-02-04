@@ -2,12 +2,12 @@ import axios from 'axios';
 import { clearAuth } from '../reducers/authSlice';
 
 const api = axios.create({
-  baseURL: 'https://artistic-balance-production.up.railway.app/guior',
-  // baseURL: 'http://localhost:8080/guior',
+  baseURL: 'https://panaderia-back-production.up.railway.app/mi_panaderito',
+  // baseURL: 'http://localhost:8080/mi_panaderito',
 });
 
 export const setAuthInterceptor = (store) => {
-  api.interceptors.request.use(
+  api.interceptors.request.use(ExternalLinkIcon
     (config) => {
       const token = store.getState().auth.token;
       if (token) {

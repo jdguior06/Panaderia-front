@@ -19,7 +19,8 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import { verificarSesionAbierta } from "../reducers/cajaSesionSlice";
 import ThemedButton from "../components/ThemedButton";
-import { showNotification } from '../utils/toast';
+import { showNotification } from "../utils/toast";
+import PermissionWrapper from "../components/PermissionWrapper";
 
 const CajasPage = () => {
   const dispatch = useDispatch();
@@ -142,21 +143,25 @@ const CajasPage = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
-            Crear Caja
-          </ThemedButton>
+          <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+            <ThemedButton variant="primary" onClick={() => handleOpenModal()}>
+              Crear Caja
+            </ThemedButton>
+          </PermissionWrapper>
 
           <div className="flex items-center ml-4">
-            <input
-              type="checkbox"
-              id="showInactive"
-              className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
-              checked={showInactive}
-              onChange={() => setShowInactive(!showInactive)}
-            />
-            <label htmlFor="showInactive" style={{ color: theme.textColor }}>
-              Mostrar inactivos
-            </label>
+            <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+              <input
+                type="checkbox"
+                id="showInactive"
+                className="mr-2 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition"
+                checked={showInactive}
+                onChange={() => setShowInactive(!showInactive)}
+              />
+              <label htmlFor="showInactive" style={{ color: theme.textColor }}>
+                Mostrar inactivos
+              </label>
+            </PermissionWrapper>
           </div>
         </div>
 
@@ -174,30 +179,36 @@ const CajasPage = () => {
                 <strong> ID: </strong>
                 {caja.id}
               </p>
-              <p className="text-sm"> <strong>Sucursal: </strong> {caja.sucursal?.nombre || "N/A"}</p>
+              <p className="text-sm">
+                {" "}
+                <strong>Sucursal: </strong> {caja.sucursal?.nombre || "N/A"}
+              </p>
 
               {/* Acciones */}
               <div className="flex justify-between mt-4">
-                <button
-                  className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
-                  onClick={() => handleOpenModal(caja)}
-                >
-                  <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
-                </button>
-                <button
-                  className={`${
-                    caja.activo
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-green-500 hover:bg-green-600"
-                  } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                  onClick={() => handleDelete(caja.id)}
-                >
-                  {caja.activo ? (
-                    <TrashIcon className="h-5 w-5 mr-1" />
-                  ) : (
-                    <ArrowPathIcon className="h-5 w-5 mr-1" />
-                  )}
-                </button>
+                <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+                  <button
+                    className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
+                    onClick={() => handleOpenModal(caja)}
+                  >
+                    <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
+                  </button>
+                  <button
+                    className={`${
+                      caja.activo
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-green-500 hover:bg-green-600"
+                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                    onClick={() => handleDelete(caja.id)}
+                  >
+                    {caja.activo ? (
+                      <TrashIcon className="h-5 w-5 mr-1" />
+                    ) : (
+                      <ArrowPathIcon className="h-5 w-5 mr-1" />
+                    )}
+                  </button>
+                </PermissionWrapper>
+
                 <button
                   className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
                   onClick={() => handleOpenAperturaModal(caja)}

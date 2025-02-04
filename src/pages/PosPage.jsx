@@ -89,12 +89,12 @@ const PosPage = () => {
       showNotification.error("El carrito está vacío. Agrega productos antes de pagar.");
       return;
     }
-    if (selectedCliente && !selectedCliente.id) {
-      showNotification.error(
-        "Error: El cliente seleccionado no tiene un ID válido. Por favor, seleccione el cliente nuevamente."
-      );
-      return;
-    }
+    // if (selectedCliente && !selectedCliente.id) {
+    //   showNotification.error(
+    //     "Error: El cliente seleccionado no tiene un ID válido. Por favor, seleccione el cliente nuevamente."
+    //   );
+    //   return;
+    // }
     setErrorVenta("");
     setIsMetodoPagoModalOpen(true);
   };
@@ -106,10 +106,10 @@ const PosPage = () => {
         return;
       }
 
-      if (!selectedCliente) {
-        showNotification.error("Por favor seleccione un cliente");
-        return;
-      }
+      // if (!selectedCliente) {
+      //   showNotification.error("Por favor seleccione un cliente");
+      //   return;
+      // }
 
       if (!metodosPago || metodosPago.length === 0) {
         showNotification.error("Debe especificar al menos un método de pago");

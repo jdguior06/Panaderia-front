@@ -1,5 +1,13 @@
 import FeatureCard from "../components/FeatureCard";
-import { DeviceTabletIcon, CurrencyDollarIcon, ChartBarIcon, UserGroupIcon, ClockIcon, CogIcon } from "@heroicons/react/24/outline";
+import {
+  DeviceTabletIcon,
+  CurrencyDollarIcon,
+  ChartBarIcon,
+  UserGroupIcon,
+  ClockIcon,
+  CogIcon,
+} from "@heroicons/react/24/outline";
+import logo from "../assets/logo.jpg";
 
 const HomePage = () => {
   return (
@@ -13,31 +21,28 @@ const HomePage = () => {
             <span className="absolute inset-0 bg-yellow-300 h-3/4 bottom-1 z-0 rounded rotate-2"></span>
           </span>
         </h1>
-        <p className="text-2xl md:text-3xl text-gray-600 font-medium mb-10">
-          ¡Sencillo, eficiente y a <span className="underline decoration-sky-500 decoration-4">buen precio!</span>
-        </p>
+      </section>
 
-        <div className="flex space-x-6 mb-10">
-          <button className="bg-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-md hover:bg-purple-700 transition transform hover:scale-105">
-            Comienza ahora, es gratis
-          </button>
-          <button className="bg-gray-200 text-gray-700 px-8 py-4 rounded-full text-lg font-semibold shadow-md hover:bg-gray-300 transition transform hover:scale-105">
-            Agenda una demostración
-          </button>
-        </div>
-
-        <div className="text-gray-500 text-lg font-semibold">
-          <p className="text-2xl">Bs- 49.99 al mes</p>
-          <p>por TODAS las aplicaciones</p>
+      <section className="bg-white py-16">
+        <div>
+          <img
+            src={logo}
+            alt="Banner de la plataforma"
+            className="w-full max-w-4xl mx-auto h-auto object-cover rounded-lg shadow-lg"
+          />
         </div>
       </section>
 
       {/* Sección de características */}
       <section className="bg-white py-16">
         <div className="container mx-auto px-6 md:px-12 text-center">
-          <h2 className="text-4xl font-bold text-gray-800 mb-8">Características Clave del Sistema POS para Restaurantes</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-8">
+            Características Clave del Sistema POS
+          </h2>
           <p className="text-lg text-gray-600 mb-12">
-            Nuestro sistema POS para restaurantes incluye todas las funcionalidades que necesitas para gestionar tu negocio de manera eficiente.
+            Nuestro sistema POS para restaurantes incluye todas las
+            funcionalidades que necesitas para gestionar tu negocio de manera
+            eficiente.
           </p>
 
           {/* Grid de características */}
@@ -48,7 +53,9 @@ const HomePage = () => {
               description="Accede a una interfaz intuitiva y adaptable a cualquier dispositivo para una gestión rápida."
             />
             <FeatureCard
-              icon={<CurrencyDollarIcon className="h-12 w-12 text-purple-600" />}
+              icon={
+                <CurrencyDollarIcon className="h-12 w-12 text-purple-600" />
+              }
               title="Pagos Integrados"
               description="Acepta múltiples métodos de pago, desde efectivo hasta tarjetas y pagos digitales."
             />

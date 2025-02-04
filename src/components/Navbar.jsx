@@ -1,8 +1,6 @@
-import React from 'react';
-import { Menu, Home, ShoppingCart, ClipboardList } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import ThemedButton from './ThemedButton';
+import logo from "../assets/logo.jpg";
 
 const Navbar = ({ toggleSidebar }) => {
   const { theme } = useTheme();
@@ -17,35 +15,15 @@ const Navbar = ({ toggleSidebar }) => {
         <button onClick={toggleSidebar} className="lg:hidden">
           <Menu size={24} className="text-white hover:text-red-300 transition duration-200" />
         </button>
-        <h1 className="text-2xl font-bold tracking-wide">PAYEJALI</h1>
+        <div>
+          <img
+            src={logo}
+            alt="Banner de la plataforma"
+            className="w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain"
+          />
+        </div>
+        <h1 className="text-2xl font-bold tracking-wide">MI PANADERITO</h1>
       </div>
-
-      {/* <div className="hidden md:flex space-x-6 items-center">
-        <Link
-          to="/"
-          className="hover:bg-opacity-75 p-2 rounded-full transition duration-300 hover:shadow-lg"
-        >
-          <Home size={20} className="m-auto" />
-        </Link>
-        <Link
-          to="/orders"
-          className="hover:bg-opacity-75 p-2 rounded-full transition duration-300 hover:shadow-lg"
-        >
-          <ShoppingCart size={20} className="m-auto" />
-        </Link>
-        <Link
-          to="/menu"
-          className="hover:bg-opacity-75 p-2 rounded-full transition duration-300 hover:shadow-lg"
-        >
-          <ClipboardList size={20} className="m-auto" />
-        </Link>
-      </div> */}
-
-      {/* <div className="flex items-center space-x-4">
-        <ThemedButton variant="secondary" onClick={() => alert('Botón Secundario')}>
-          Nueva Orden
-        </ThemedButton>
-      </div> */}
     </nav>
   );
 };

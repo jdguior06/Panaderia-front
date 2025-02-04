@@ -3,7 +3,6 @@ import {
   XMarkIcon,
   HomeIcon,
   UsersIcon,
-  ChartBarIcon,
   CogIcon,
   ShoppingCartIcon,
   CubeIcon,
@@ -244,14 +243,14 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
           </Link>
         </PermissionWrapper>
 
-        <Link
+        {/* <Link
           to="/settings"
           className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
             location.pathname.includes("/settings") ? "bg-red-700" : ""
           }`}
         >
           <CogIcon className="w-5 h-5 mr-2" /> Configuración
-        </Link>
+        </Link> */}
 
         <Link
           to="/temas"

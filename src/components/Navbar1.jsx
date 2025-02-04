@@ -1,5 +1,3 @@
-// src/components/Navbar.jsx
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
@@ -7,10 +5,6 @@ const Navbar = () => {
 
   const handleHome = () => {
     navigate('/home');
-  };
-
-  const handlePlanes = () => {
-    navigate('/planes');
   };
 
   const handleLogin = () => {
@@ -25,12 +19,6 @@ const Navbar = () => {
           className="text-red-200 py-2 px-4 rounded-lg hover:bg-red-600 hover:text-white transition duration-300"
         >
           Inicio
-        </button>
-        <button
-          onClick={handlePlanes}
-          className="text-red-200 py-2 px-4 rounded-lg hover:bg-red-600 hover:text-white transition duration-300"
-        >
-          Planes de Suscripción
         </button>
         <button
           onClick={handleLogin}

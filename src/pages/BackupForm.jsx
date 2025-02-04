@@ -1,5 +1,3 @@
-// src/pages/ConfiguracionBackup.jsx
-import React from "react";
 import BackupDownloadButton from "../components/BackupDownloadButton";
 import BackupUploadForm from "../components/BackupUploadForm";
 

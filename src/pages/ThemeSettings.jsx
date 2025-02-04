@@ -64,19 +64,6 @@ const ThemeSettings = () => {
         </div>
       )}
 
-      {/* Radio de Borde */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-2">Border Radius:</label>
-        <input
-          type="range"
-          min="0"
-          max="10"
-          value={tempTheme.borderRadius}
-          onChange={(e) => handleChange("borderRadius", e.target.value)}
-          className="w-full"
-        />
-      </div>
-
       {/* Botón Aplicar */}
       <button
         onClick={() => applyTheme(tempTheme)}
