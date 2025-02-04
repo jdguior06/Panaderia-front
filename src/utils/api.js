@@ -2,8 +2,8 @@ import axios from 'axios';
 import { clearAuth } from '../reducers/authSlice';
 
 const api = axios.create({
-  baseURL: 'https://panaderia-back-production.up.railway.app/mi_panaderito',
-  // baseURL: 'http://localhost:8080/mi_panaderito',
+  // baseURL: 'https://panaderia-back-production.up.railway.app/mi_panaderito',
+  baseURL: 'http://localhost:8080/mi_panaderito',
 });
 
 export const setAuthInterceptor = (store) => {
