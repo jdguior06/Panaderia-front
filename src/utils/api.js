@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 export const setAuthInterceptor = (store) => {
-  api.interceptors.request.use(ExternalLinkIcon
+  api.interceptors.request.use(
     (config) => {
       const token = store.getState().auth.token;
       if (token) {
