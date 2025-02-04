@@ -160,7 +160,7 @@ const AlmacenesPage = () => {
                       almacen.activo
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-green-500 hover:bg-green-600"
-                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                    } py-1 text-white px-3 rounded-lg shadow transition hover:scale-105`}
                     onClick={() => handleDelete(almacen.id)}
                   >
                     {almacen.activo ? (

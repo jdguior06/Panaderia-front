@@ -138,17 +138,8 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
             >
               <TruckIcon className="w-5 h-5 mr-2" /> Cajas
             </Link>
-            {/* <Link
-              to={`/reportes`}
-              className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-                location.pathname.includes("/reportes") ? "bg-red-700" : ""
-              }`}
-            >
-              <ChartBarIcon className="w-5 h-5 mr-2" /> Reportes
-            </Link> */}
           </>
         )}
-        {/* Resto de las opciones de navegación */}
         <PermissionWrapper permission="PERMISO_GESTIONAR_PERSONAL">
           <Link
             to="/usuarios"
@@ -199,7 +190,6 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
           </PermissionWrapper>
         </div>
 
-        {/* Más opciones de navegación */}
         <PermissionWrapper permission={"PERMISO_VER_CLIENTES"}>
           <Link
             to="/clientes"
@@ -242,15 +232,6 @@ const Sidebar = ({ isOpen, toggleSidebar, selectedSucursal }) => {
             <ShieldCheckIcon className="w-5 h-5 mr-2" /> Permisos
           </Link>
         </PermissionWrapper>
-
-        {/* <Link
-          to="/settings"
-          className={`flex items-center py-2 px-3 rounded-lg transition duration-200 hover:bg-red-600 ${
-            location.pathname.includes("/settings") ? "bg-red-700" : ""
-          }`}
-        >
-          <CogIcon className="w-5 h-5 mr-2" /> Configuración
-        </Link> */}
 
         <Link
           to="/temas"

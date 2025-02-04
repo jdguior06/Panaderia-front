@@ -165,7 +165,6 @@ const CajasPage = () => {
           </div>
         </div>
 
-        {/* Grid de cajas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCajas.map((caja) => (
             <div
@@ -185,38 +184,38 @@ const CajasPage = () => {
               </p>
 
               {/* Acciones */}
-              <div className="flex justify-between mt-4">
-                <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
-                  <button
-                    className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
-                    onClick={() => handleOpenModal(caja)}
-                  >
-                    <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
-                  </button>
-                  <button
-                    className={`${
-                      caja.activo
-                        ? "bg-red-500 hover:bg-red-600"
-                        : "bg-green-500 hover:bg-green-600"
-                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
-                    onClick={() => handleDelete(caja.id)}
-                  >
-                    {caja.activo ? (
-                      <TrashIcon className="h-5 w-5 mr-1" />
-                    ) : (
-                      <ArrowPathIcon className="h-5 w-5 mr-1" />
-                    )}
-                  </button>
-                </PermissionWrapper>
+              <div className="flex items-center justify-between mt-2 gap-2">
+                  <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
+                    <button
+                      className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition hover:scale-105"
+                      onClick={() => handleOpenModal(caja)}
+                    >
+                      <PencilSquareIcon className="h-5 w-5 mr-1 inline" />
+                    </button>
+                    <button
+                      className={`${
+                        caja.activo
+                          ? "bg-red-500 hover:bg-red-600"
+                          : "bg-green-500 hover:bg-green-600"
+                      } py-1 text-white px-3 rounded-lg shadow transition hover:scale-105`}
+                      onClick={() => handleDelete(caja.id)}
+                    >
+                      {caja.activo ? (
+                        <TrashIcon className="h-5 w-5 mr-1" />
+                      ) : (
+                        <ArrowPathIcon className="h-5 w-5 mr-1" />
+                      )}
+                    </button>
+                  </PermissionWrapper>
 
-                <button
-                  className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
-                  onClick={() => handleOpenAperturaModal(caja)}
-                >
-                  <CurrencyDollarIcon className="h-5 w-5 mr-1 inline" />
-                  Aperturar
-                </button>
-              </div>
+                  <button
+                    className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition hover:scale-105"
+                    onClick={() => handleOpenAperturaModal(caja)}
+                  >
+                    <CurrencyDollarIcon className="h-5 w-5 mr-1 inline" />
+                    Aperturar
+                  </button>
+                </div>
             </div>
           ))}
         </div>

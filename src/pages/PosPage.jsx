@@ -357,11 +357,6 @@ const PosPage = () => {
                   className="flex items-center justify-between bg-gray-50 border rounded-lg shadow-sm p-4"
                 >
                   <div className="flex items-center">
-                    <img
-                      src={item.foto || "https://via.placeholder.com/60"}
-                      alt={item.nombre}
-                      className="w-16 h-16 object-cover rounded-lg mr-4"
-                    />
                     <div>
                       <h3 className="text-lg font-semibold text-gray-700">
                         {item.nombre}

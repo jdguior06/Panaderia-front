@@ -146,12 +146,6 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
               className={`p-4 rounded-lg shadow-lg transition ${
                 sucursal.activo ? "bg-white" : "bg-gray-300"
               }`}
-              // style={{
-              //   backgroundColor: sucursal.activo
-              //     ? theme.backgroundColor
-              //     : "#f0f0f0",
-              //   color: theme.textColor,
-              // }}
             >
               <h3 className="text-xl font-bold mb-2">{sucursal.nombre}</h3>
               <p className="text-sm">
@@ -170,7 +164,7 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
               <div className="flex justify-between items-center mt-4">
                 <PermissionWrapper permission="PERMISO_ADMINISTRAR_SUCURSALES">
                   <button
-                    className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
+                    className="text-white bg-blue-500 hover:bg-blue-600 py-1 px-3 rounded-lg shadow-sm flex items-center transition hover:scale-105"
                     onClick={() => handleOpenModal(sucursal)}
                   >
                     <PencilSquareIcon className="h-5 w-5 mr-1" />
@@ -181,7 +175,7 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
                       sucursal.activo
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-green-500 hover:bg-green-600"
-                    } py-1 text-white px-3 rounded-lg shadow transform transition hover:scale-105`}
+                    } py-1 text-white px-3 rounded-lg shadow transition hover:scale-105`}
                     onClick={() => handleDelete(sucursal.id)}
                   >
                     {sucursal.activo ? (
@@ -193,7 +187,7 @@ const SucursalesPage = ({ setSelectedSucursal }) => {
                 </PermissionWrapper>
 
                 <button
-                  className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition transform hover:scale-105"
+                  className="text-white py-1 px-3 bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-sm flex items-center transition hover:scale-105"
                   onClick={() => handleSelectSucursal(sucursal)}
                 >
                   <BuildingStorefrontIcon className="h-5 w-5 mr-1" />
